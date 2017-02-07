@@ -15,15 +15,15 @@
             <h1>
                 Author List
             </h1>
-            <table>
+            <table class="table">
                 <tr>
                     <th>
                         ID
                     </th>
-                    <th style="padding-left: 10px;">
+                    <th>
                         Name
                     </th>
-                    <th style="padding-left: 10px;">
+                    <th>
                         Date Added
                     </th>
                 </tr>    
@@ -39,11 +39,11 @@
                                 <td>
                                     ${a.authorId}
                                 </td>
-                                <td style="padding-left: 10px;">
+                                <td>
                                     ${a.authorName}
                                 </td>
-                                <td style="padding-left: 10px;">
-                                    ${a.dateAdded}
+                                <td>
+                                    <fmt:formatDate pattern="M/d/yyyy" value="${a.dateAdded}"/>                                 
                                 </td>
                             </tr>  
                 </c:forEach>             
@@ -56,4 +56,5 @@
     <!-- Bootstrap: Latest compiled and minified CSS -->
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" 
       integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+<link href="stylesheet.css" rel="stylesheet" type="text/css"/>
 </html>
