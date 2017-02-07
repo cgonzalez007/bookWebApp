@@ -20,10 +20,10 @@
                     <th>
                         ID
                     </th>
-                    <th>
+                    <th style="padding-left: 10px;">
                         Name
                     </th>
-                    <th>
+                    <th style="padding-left: 10px;">
                         Date Added
                     </th>
                 </tr>    
@@ -39,10 +39,10 @@
                                 <td>
                                     ${a.authorId}
                                 </td>
-                                <td>
+                                <td style="padding-left: 10px;">
                                     ${a.authorName}
                                 </td>
-                                <td>
+                                <td style="padding-left: 10px;">
                                     ${a.dateAdded}
                                 </td>
                             </tr>  

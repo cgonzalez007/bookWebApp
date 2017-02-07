@@ -11,9 +11,9 @@ import java.util.List;
 public class AuthorService {
     public final List<Author> retrieveAuthorInformation(){
         return Arrays.asList(
-                new Author(0010,"Dr. Seuss",new Date()),
-                new Author(0451,"Mark Twain",new Date()),
-                new Author(4521,"William Shakespeare",new Date()),
-                new Author(0563,"George Orwell",new Date()));
+                new Author(010,"Dr. Seuss",new Date()),
+                new Author(051,"Mark Twain",new Date()),
+                new Author(214,"W. Shakespeare",new Date()),
+                new Author(003,"G. Orwell",new Date()));
     }
 }
