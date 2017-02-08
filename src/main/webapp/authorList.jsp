@@ -43,15 +43,20 @@
                                     ${a.authorName}
                                 </td>
                                 <td>
-                                    <fmt:formatDate pattern="M/d/yyyy" value="${a.dateAdded}"/>                                 
+                                    <fmt:formatDate pattern="M/d/yyyy hh:mm a" value="${a.dateAdded}"/>                                 
                                 </td>
                             </tr>  
                 </c:forEach>             
             </table>
             <br>
             <br>
-            <a href="ac?rType=backHome">Go to Home Page</a>
+            <a href="ac?rType=home">Go to Home Page</a>
         </body>
+        <br>
+        <br>
+        <footer>
+            Chris Gonzalez 2017
+        </footer>
     </div>
     <!-- Bootstrap: Latest compiled and minified CSS -->
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" 

@@ -9,11 +9,11 @@ import java.util.List;
  * @author Chris Gonzalez 2017
  */
 public class AuthorService {
-    public final List<Author> retrieveAuthorInformation(){
+    public final List<Author> retrieveAuthors(){
         return Arrays.asList(
                 new Author(010,"Dr. Seuss",new Date()),
                 new Author(051,"Mark Twain",new Date()),
-                new Author(214,"W. Shakespeare",new Date()),
-                new Author(003,"G. Orwell",new Date()));
+                new Author(214,"William Shakespeare",new Date()),
+                new Author(003,"George Orwell",new Date()));
     }
 }

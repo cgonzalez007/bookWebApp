@@ -15,7 +15,17 @@
             <h1>
                 Administrative Tasks
             </h1>
-            <a href="ac?rType=authorList">Go to Authors List</a>
+            <ul>
+                <li>
+                    <a href="ac?rType=authorList">Go to Authors List</a>
+                </li>
+            </ul>
+            
+            <br>
+            <br>
+            <footer>
+                Chris Gonzalez 2017
+            </footer>
         </body>
     </div>
     <!-- Bootstrap: Latest compiled and minified CSS -->
