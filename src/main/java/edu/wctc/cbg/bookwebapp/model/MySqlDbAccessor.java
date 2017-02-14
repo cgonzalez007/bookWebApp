@@ -15,15 +15,23 @@ import java.util.Map;
  *
  * @author Chris Gonzalez
  */
-public class MySqlDbAccessor {
+public class MySqlDbAccessor implements DbAccessor {
     private Connection connection;
     private Statement statement;
     private ResultSet resultSet;
     private static final String ERROR_INVALID_INPUT = "Error: Invalid input. "
             + "Input cannot be null or empty. Number values cannot be less than"
             + "1.";
-    private static final int MIN_VAL_FOR_MAX_RECORDS = 1;
-    
+    /**
+     * Open database connection
+     * @param driverClass
+     * @param url
+     * @param userName
+     * @param password
+     * @throws ClassNotFoundException
+     * @throws SQLException 
+     */
+    @Override
     public final void openConnection(String driverClass, String url, String userName, 
             String password) throws ClassNotFoundException, SQLException{
         if(driverClass.isEmpty() || driverClass == null || userName.isEmpty() ||
@@ -36,21 +44,28 @@ public class MySqlDbAccessor {
         connection = DriverManager.getConnection(url,userName,password);
     }
     
+    @Override
     public final void closeConnection() throws SQLException{
         if(connection!= null){
             connection.close();
         }
     }
-    
+    /**
+     * Retrieve all records
+     * @param table
+     * @param maxRecords
+     * @return
+     * @throws SQLException 
+     */
+    @Override
     public List<Map<String,Object>> getAllRecords(String table, int maxRecords) 
             throws SQLException{
-        if(table.isEmpty() || table == null || maxRecords < 
-                MIN_VAL_FOR_MAX_RECORDS){
+        if(table.isEmpty() || table == null){
             throw new IllegalArgumentException(ERROR_INVALID_INPUT);
         }
         String sql = "";
         
-        if(maxRecords >= 1){
+        if(maxRecords > 0){
             sql = "SELECT * FROM " + table + " LIMIT " + maxRecords;
         } else {
             sql = "SELECT * FROM " + table;
@@ -74,7 +89,15 @@ public class MySqlDbAccessor {
         }
         return results;
     }
-    
+    /**
+     * Delete record(s) by id
+     * @param table
+     * @param idColName
+     * @param id
+     * @return
+     * @throws SQLException 
+     */
+    @Override
     public int deleteById(String table, String idColName, Object id) 
             throws SQLException{
         if(table.isEmpty() || table == null || idColName.isEmpty() || 
@@ -95,11 +118,15 @@ public class MySqlDbAccessor {
         recordsDeleted = statement.executeUpdate(sql);
             
         return recordsDeleted;
-        
     }
-    
-//    public List<Map<String,Object>> getAllRecords(String table, int maxRecords,
-//            List<String> colNames) throws SQLException{
-//        return null;
+//
+//    public static void main(String[] args) throws ClassNotFoundException, SQLException {
+//        DbAccessor test = new MySqlDbAccessor();
+//        test.openConnection("com.mysql.jdbc.Driver", "jdbc:mysql://localhost:3306/book", "root", "admin");
+//        
+//        List<Map<String,Object>> records = test.getAllRecords("author", 3);
+//        
+//        System.out.println(records);
+//        test.closeConnection();
 //    }
 }
