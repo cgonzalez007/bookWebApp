@@ -12,8 +12,15 @@ public interface IAuthorDao {
     @Override
     public abstract boolean equals(Object obj);
 
-    public abstract List<Author> getAuthorList(String tableName, int maxRecords) throws ClassNotFoundException, SQLException;
-
+    public abstract List<Author> getAuthorList(String tableName, int maxRecords) 
+            throws ClassNotFoundException, SQLException;
+    
+    public abstract int deleteAuthorById(String tableName, String authorIdColName,
+            Object authorId) throws ClassNotFoundException, SQLException;
+    
+    public int addNewAuthor(String tableName, List<String> colNames, List<Object> 
+            colValues) throws ClassNotFoundException, SQLException;
+    
     public abstract DbAccessor getDb();
 
     public abstract String getDriverClass();

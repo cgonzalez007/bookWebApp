@@ -9,39 +9,47 @@ import java.util.Map;
  * @author cgonz
  */
 public interface DbAccessor {
-
+    /**
+     * 
+     * @throws SQLException 
+     */
     public abstract void closeConnection() throws SQLException;
 
     /**
      * Delete record(s) by id
-     * @param table
+     * @param tableName
      * @param idColName
      * @param id
      * @return
      * @throws SQLException
      */
-    public abstract int deleteById(String table, String idColName, Object id) 
+    public abstract int deleteById(String tableName, String idColName, Object id) 
             throws SQLException;
 
     /**
-     * Retrieve all records
+     * 
+     * @param tableName
+     * @param colNames
+     * @param colValues
+     * @return
+     * @throws SQLException 
+     */        
+    public int insertInto(String tableName, List<String> colNames, List<Object> 
+            colValues) throws SQLException;
+    /**
+     * 
      * @param table
      * @param maxRecords
      * @return
-     * @throws SQLException
-     */
+     * @throws SQLException 
+     */        
     public abstract List<Map<String, Object>> getAllRecords(String table,
             int maxRecords) throws SQLException;
 
-    /**
-     * Open database connection
-     * @param driverClass
-     * @param url
-     * @param userName
-     * @param password
-     * @throws ClassNotFoundException
-     * @throws SQLException
-     */
+    public int updateById(String tableName, List<String> colNamesToSet, 
+            List<Object> colValues, String conditionColName, Object 
+                    conditionColValue) throws SQLException;
+    
     public abstract void openConnection(String driverClass, String url, 
             String userName, String password) throws ClassNotFoundException, 
             SQLException;

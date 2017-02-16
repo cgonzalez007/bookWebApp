@@ -1,7 +1,9 @@
 package edu.wctc.cbg.bookwebapp.controller;
 
 import edu.wctc.cbg.bookwebapp.model.Author;
+import edu.wctc.cbg.bookwebapp.model.AuthorDao;
 import edu.wctc.cbg.bookwebapp.model.AuthorService;
+import edu.wctc.cbg.bookwebapp.model.MySqlDbAccessor;
 import java.io.IOException;
 import java.util.List;
 import javax.servlet.RequestDispatcher;
@@ -24,6 +26,9 @@ public class AuthorController extends HttpServlet {
     public static final String REQUEST_TYPE = "rType";
     public static final String RTYPE_AUTHOR_LIST = "authorList";
     public static final String RTYPE_HOME = "home";
+    
+    public static final String AUTHOR_TABLE_NAME = "author";
+    public static final int MAX_RECORDS = 50;
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
      * methods.
@@ -40,9 +45,15 @@ public class AuthorController extends HttpServlet {
         String destination = HOME_PAGE;
         try {
             if(requestType.equalsIgnoreCase(RTYPE_AUTHOR_LIST)){
-                AuthorService authorService= new AuthorService();
+            AuthorService authorService = new AuthorService(
+                new AuthorDao(
+                        new MySqlDbAccessor(),"com.mysql.jdbc.Driver", 
+                        "jdbc:mysql://localhost:3306/book", 
+                        "root", "admin")
+                        );
                 destination = AUTHOR_LIST_PAGE;
-                List<Author> authors = authorService.retrieveAuthors();
+                List<Author> authors = authorService.retrieveAuthors(
+                        AUTHOR_TABLE_NAME, MAX_RECORDS);
                 request.setAttribute("authors", authors);
             }else if(requestType.equalsIgnoreCase(RTYPE_HOME)){
                 destination = destination = HOME_PAGE;

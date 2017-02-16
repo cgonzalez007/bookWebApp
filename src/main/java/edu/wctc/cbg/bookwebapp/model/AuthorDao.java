@@ -28,9 +28,17 @@ public class AuthorDao implements IAuthorDao {
     }
     
     @Override
+    public final int deleteAuthorById(String tableName, String authorIdColName, 
+            Object authorId) throws ClassNotFoundException, SQLException{
+        db.openConnection(driverClass, url, userName, password);
+        int recsDeleted = db.deleteById(tableName, authorIdColName, authorId);
+        db.closeConnection();
+        return recsDeleted;
+    }
+    
+    @Override
     public final List<Author> getAuthorList(String tableName, int maxRecords) 
-            throws ClassNotFoundException, 
-            SQLException{
+            throws ClassNotFoundException, SQLException{
         db.openConnection(driverClass, url, userName, password);
         
         List<Author> records = new ArrayList<>();      
@@ -58,6 +66,17 @@ public class AuthorDao implements IAuthorDao {
         
         return records;
     }
+    @Override
+    public final int addNewAuthor(String tableName, List<String> 
+            authorTableColNames, List<Object> authorTableColValues) 
+            throws ClassNotFoundException, SQLException{
+        int authorsAdded = 0;
+        db.openConnection(driverClass, url, userName, password);
+        authorsAdded = db.insertInto(tableName, authorTableColNames, authorTableColValues);
+        db.closeConnection();
+        return authorsAdded;
+    }
+    
 
     @Override
     public final DbAccessor getDb() {
@@ -150,18 +169,28 @@ public class AuthorDao implements IAuthorDao {
         }
         return true;
     }   
-    
-//    public static void main(String[] args) throws ClassNotFoundException, SQLException {
-//        AuthorDao test = new AuthorDao(
-//            new MySqlDbAccessor(),
-//            "com.mysql.jdbc.Driver", 
-//            "jdbc:mysql://localhost:3306/book", 
-//            "root", "admin");
-//        
-//        List<Author> authors = test.getAuthorList("author", 50);
-//        for(Author a : authors){
-//            System.out.println(a);
-//        }     
-//        
-//    }
+    //TESTING PURPOSES
+    public static void main(String[] args) throws ClassNotFoundException, SQLException {
+        AuthorDao test = new AuthorDao(new MySqlDbAccessor(),
+                "com.mysql.jdbc.Driver", 
+                        "jdbc:mysql://localhost:3306/book", 
+                        "root", "admin");
+        
+        
+//        test.deleteAuthorById("author", "author_id", "5");
+
+        List<String> colNames = new ArrayList<>();
+        colNames.add("author_name");
+        colNames.add("date_added");
+        List<Object> colValues = new ArrayList<>();
+        colValues.add("Alex Trebek");
+        colValues.add("2011-01-27");
+        test.addNewAuthor("author", colNames, colValues);
+        
+
+        List<Author> authors = test.getAuthorList("author", 50);
+        
+        System.out.println(authors);
+        
+    }
 }
