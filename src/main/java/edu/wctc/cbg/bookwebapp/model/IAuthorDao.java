@@ -21,6 +21,10 @@ public interface IAuthorDao {
     public int addNewAuthor(String tableName, List<String> colNames, List<Object> 
             colValues) throws ClassNotFoundException, SQLException;
     
+    public int updateAuthorById(String authorTableName, List<String> colNames, 
+            List<Object> colValues, String authorIdColName, Object 
+                    authorId) throws SQLException,ClassNotFoundException;
+    
     public abstract DbAccessor getDb();
 
     public abstract String getDriverClass();

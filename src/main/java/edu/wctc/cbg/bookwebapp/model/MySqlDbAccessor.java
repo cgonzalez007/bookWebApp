@@ -119,12 +119,12 @@ public class MySqlDbAccessor implements DbAccessor {
     }
     
     @Override
-    public final int updateById(String tableName, List<String> colNamesToSet, 
-            List<Object> colValues, String conditionColName, Object 
-                    conditionColValue) throws SQLException{
-        if(tableName == null || tableName.isEmpty() || colNamesToSet == null ||
-                colValues == null || conditionColName == null || 
-                conditionColName.isEmpty() || conditionColValue ==null){
+    public final int updateById(String tableName, List<String> colNames, 
+            List<Object> colValues, String idColName, Object 
+                    idColValue) throws SQLException{
+        if(tableName == null || tableName.isEmpty() || colNames == null ||
+                colValues == null || idColName == null || 
+                idColName.isEmpty() || idColValue ==null){
             throw new IllegalArgumentException(ERROR_INVALID_INPUT);
         }
         int recordsUpdated = 0;
@@ -133,20 +133,19 @@ public class MySqlDbAccessor implements DbAccessor {
         
         StringJoiner sj = new StringJoiner(",");
         
-        for(String colName : colNamesToSet){
+        for(String colName : colNames){
             sj.add(colName + " = ?");
         }
         sql += sj.toString();
         
-        sql += " WHERE " + conditionColName + " = " + " ? ";
+        sql += " WHERE " + idColName + " = " + " ? ";
         preparedStatement = connection.prepareStatement(sql);
         
-        for(int i =0;i < colNamesToSet.size() ; i++){
+        for(int i =0;i < colNames.size() ; i++){
             preparedStatement.setObject(i+1, colValues.get(i));
         }
         
-        preparedStatement.setObject(colNamesToSet.size()+1, conditionColValue);
-        System.out.println(preparedStatement.toString());
+        preparedStatement.setObject(colNames.size()+1, idColValue);
         recordsUpdated = preparedStatement.executeUpdate();
 
         return recordsUpdated;

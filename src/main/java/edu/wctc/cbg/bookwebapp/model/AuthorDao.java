@@ -67,6 +67,16 @@ public class AuthorDao implements IAuthorDao {
         return records;
     }
     @Override
+    public int updateAuthorById(String authorTableName, List<String> colNames, 
+            List<Object> colValues, String authorIdColName, Object authorId) 
+            throws SQLException, ClassNotFoundException{
+        int authorRecordsUpdated = 0;
+        db.openConnection(driverClass, url, userName, password);
+        
+        db.closeConnection();
+        return authorRecordsUpdated;
+    }
+    @Override
     public final int addNewAuthor(String tableName, List<String> 
             authorTableColNames, List<Object> authorTableColValues) 
             throws ClassNotFoundException, SQLException{
@@ -179,14 +189,20 @@ public class AuthorDao implements IAuthorDao {
         
 //        test.deleteAuthorById("author", "author_id", "5");
 
-        List<String> colNames = new ArrayList<>();
-        colNames.add("author_name");
-        colNames.add("date_added");
-        List<Object> colValues = new ArrayList<>();
-        colValues.add("Alex Trebek");
-        colValues.add("2011-01-27");
-        test.addNewAuthor("author", colNames, colValues);
+//        List<String> colNames = new ArrayList<>();
+//        colNames.add("author_name");
+//        colNames.add("date_added");
+//        List<Object> colValues = new ArrayList<>();
+//        colValues.add("Alex Trebek");
+//        colValues.add("2011-01-27");
+//        test.addNewAuthor("author", colNames, colValues);
         
+
+
+
+
+
+
 
         List<Author> authors = test.getAuthorList("author", 50);
         
