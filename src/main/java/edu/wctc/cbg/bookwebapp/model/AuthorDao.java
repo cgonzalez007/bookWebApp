@@ -67,12 +67,13 @@ public class AuthorDao implements IAuthorDao {
         return records;
     }
     @Override
-    public int updateAuthorById(String authorTableName, List<String> colNames, 
+    public final int updateAuthorById(String authorTableName, List<String> colNames, 
             List<Object> colValues, String authorIdColName, Object authorId) 
             throws SQLException, ClassNotFoundException{
         int authorRecordsUpdated = 0;
         db.openConnection(driverClass, url, userName, password);
-        
+        authorRecordsUpdated = db.updateById(authorTableName, colNames, 
+                colValues, authorIdColName, authorId);
         db.closeConnection();
         return authorRecordsUpdated;
     }
@@ -179,34 +180,4 @@ public class AuthorDao implements IAuthorDao {
         }
         return true;
     }   
-    //TESTING PURPOSES
-    public static void main(String[] args) throws ClassNotFoundException, SQLException {
-        AuthorDao test = new AuthorDao(new MySqlDbAccessor(),
-                "com.mysql.jdbc.Driver", 
-                        "jdbc:mysql://localhost:3306/book", 
-                        "root", "admin");
-        
-        
-//        test.deleteAuthorById("author", "author_id", "5");
-
-//        List<String> colNames = new ArrayList<>();
-//        colNames.add("author_name");
-//        colNames.add("date_added");
-//        List<Object> colValues = new ArrayList<>();
-//        colValues.add("Alex Trebek");
-//        colValues.add("2011-01-27");
-//        test.addNewAuthor("author", colNames, colValues);
-        
-
-
-
-
-
-
-
-        List<Author> authors = test.getAuthorList("author", 50);
-        
-        System.out.println(authors);
-        
-    }
 }

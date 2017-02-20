@@ -26,7 +26,12 @@ public class AuthorService {
             String authorId) throws ClassNotFoundException, SQLException{
         return authorDao.deleteAuthorById(tableName, authorIdColName, authorId);
     }
-    
+    public final int updateAuthorById(String authorTableName, List<String> colNames, 
+            List<Object> colValues, String authorIdColName, Object authorId) 
+            throws ClassNotFoundException, SQLException{
+        return authorDao.updateAuthorById(authorTableName, colNames, colValues, 
+                authorIdColName, authorId);
+    }
     public final int addNewAuthor(String tableName, List<String> authorTableColNames,
             List<Object> authorTableColValues) throws ClassNotFoundException, 
             SQLException{
@@ -41,33 +46,5 @@ public class AuthorService {
     public final void setAuthorDao(IAuthorDao authorDao) {
         //VALIDATE
         this.authorDao = authorDao;
-    }
-    
-    //TESTING PURPOSES
-    public static void main(String[] args) throws ClassNotFoundException, SQLException {
-        AuthorService authorService = new AuthorService(
-                new AuthorDao(
-                        new MySqlDbAccessor(),"com.mysql.jdbc.Driver", 
-                        "jdbc:mysql://localhost:3306/book", 
-                        "root", "admin")
-                        );
-        
-        List<String> colNames = new ArrayList<>();
-        colNames.add("author_name");
-        colNames.add("date_added");
-        List<Object> colValues = new ArrayList<>();
-        colValues.add("Sean Connery");
-        colValues.add("2017-02-16");
-        
-        authorService.addNewAuthor("author", colNames, colValues);
-        
-                        
-//        int recsDeleted = 
-//                authorService.deleteAuthorById("author", "author_id", "3");
-        
-        List<Author> authors = authorService.retrieveAuthors("author", 50);
-        
-//        System.out.println("records deleted:   " + recsDeleted);
-        System.out.println("\n\n"+authors);
     }
 }

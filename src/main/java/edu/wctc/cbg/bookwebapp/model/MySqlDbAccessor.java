@@ -14,7 +14,11 @@ import java.util.Map;
 import java.util.StringJoiner;
 
 /**
- *
+ * In order to open connection:
+ *  test.openConnection("com.mysql.jdbc.Driver", 
+                        "jdbc:mysql://localhost:3306/book", 
+                        "root", "admin");
+
  * @author Chris Gonzalez
  */
 public class MySqlDbAccessor implements DbAccessor {
@@ -186,43 +190,5 @@ public class MySqlDbAccessor implements DbAccessor {
         recordsInserted = preparedStatement.executeUpdate();
         
         return recordsInserted;
-    }
-    //TESTING PURPOSES
-    public static void main(String[] args) throws ClassNotFoundException, SQLException {
-        MySqlDbAccessor test = new MySqlDbAccessor();
-        
-        test.openConnection("com.mysql.jdbc.Driver", 
-                        "jdbc:mysql://localhost:3306/book", 
-                        "root", "admin");
-//        test.deleteById("author", "author_id", "2");
-        
-        
-//        List<String> colNames = new ArrayList<>();
-//        colNames.add("author_name");
-//        colNames.add("date_added");
-//        List<Object> colValues = new ArrayList<>();
-//        colValues.add("Chris Gonzalez ");
-//        colValues.add("2017-02-17");
-//        test.insertInto("author", colNames, colValues);
-
-
-        List<String> colNamesUpdate = new ArrayList<>();
-        colNamesUpdate.add("author_name");
-        colNamesUpdate.add("date_added");
-        List<Object> colValuesUpdate = new ArrayList<>();
-        colValuesUpdate.add("TEST TEST TEST");
-        colValuesUpdate.add("2011-11-11"); 
-
-
-        test.updateById("author", colNamesUpdate, colValuesUpdate, "author_id", "12");
-        
-
-
-
-        List<Map<String,Object>> records = test.getAllRecords("author", 50);
-        
-        System.out.println(records);
-        
-        test.closeConnection();
     }
 }
