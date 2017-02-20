@@ -139,15 +139,15 @@ public class MySqlDbAccessor implements DbAccessor {
         sql += sj.toString();
         
         sql += " WHERE " + conditionColName + " = " + " ? ";
-        
         preparedStatement = connection.prepareStatement(sql);
         
-        int i = 1;
-        for(;i < colNamesToSet.size() ; i++){
-            preparedStatement.setObject(i, colValues.get(i));
+        for(int i =0;i < colNamesToSet.size() ; i++){
+            preparedStatement.setObject(i+1, colValues.get(i));
         }
         
-        preparedStatement.setObject(i+1, conditionColValue);
+        preparedStatement.setObject(colNamesToSet.size()+1, conditionColValue);
+        System.out.println(preparedStatement.toString());
+        recordsUpdated = preparedStatement.executeUpdate();
 
         return recordsUpdated;
     }
