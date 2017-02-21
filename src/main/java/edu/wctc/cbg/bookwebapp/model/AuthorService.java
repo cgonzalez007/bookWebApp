@@ -47,4 +47,42 @@ public class AuthorService {
         //VALIDATE
         this.authorDao = authorDao;
     }
+    //TESTING PURPOSES
+    public static void main(String[] args) throws ClassNotFoundException, SQLException {
+        AuthorService authorService = new AuthorService(
+                new AuthorDao(
+                        new MySqlDbAccessor(),"com.mysql.jdbc.Driver", 
+                        "jdbc:mysql://localhost:3306/book", 
+                        "root", "admin")
+                        );
+//        
+//        List<String> colNames = new ArrayList<>();
+//        colNames.add("author_name");
+//        colNames.add("date_added");
+//        List<Object> colValues = new ArrayList<>();
+//        colValues.add("Sean Connery");
+//        colValues.add("2017-02-16");
+//        
+//        authorService.addNewAuthor("author", colNames, colValues);
+        
+                   
+
+        List<String> colNamesUpdate = new ArrayList<>();
+        colNamesUpdate.add("author_name");
+        colNamesUpdate.add("date_added");
+        List<Object> colValuesUpdate = new ArrayList<>();
+        colValuesUpdate.add("THIS IS ANOTHER TEST");
+        colValuesUpdate.add("1999-01-01"); 
+
+        authorService.updateAuthorById("author", 
+                colNamesUpdate, colValuesUpdate, "author_id", "12");
+
+//        int recsDeleted = 
+//                authorService.deleteAuthorById("author", "author_id", "3");
+        
+        List<Author> authors = authorService.retrieveAuthors("author", 50);
+        
+//        System.out.println("records deleted:   " + recsDeleted);
+        System.out.println("\n\n"+authors);
+    }
 }

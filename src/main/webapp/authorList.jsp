@@ -15,8 +15,18 @@
             <h1>
                 Author List
             </h1>
+            <br>
+            <form id="authorForm" name="authorForm" method="POST" action="ac?rType=addAuthor">
+                <input type="submit" name="add" value="Add">
+            <form id="authorForm" name="authorForm" method="POST" action="ac?rType=deleteAuthor">    
+                <input type="submit" name="delete" value="Delete">
+            <br>            
+            <br>
             <table class="table">
                 <tr>
+                    <th>
+                       
+                    </th>
                     <th>
                         ID
                     </th>
@@ -37,6 +47,9 @@
                         </c:otherwise>     
                     </c:choose>
                                 <td>
+                                    <input type="checkbox" name="authorId" value="${a.authorId}">
+                                </td>
+                                <td>
                                     ${a.authorId}
                                 </td>
                                 <td>
@@ -48,6 +61,8 @@
                             </tr>  
                 </c:forEach>             
             </table>
+            </form>  
+            </form>       
             <br>
             <br>
             <a href="ac?rType=home">Go to Home Page</a>
