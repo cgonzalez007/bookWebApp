@@ -16,31 +16,35 @@
                 Add/Edit Author
             </h1>
             <form id="addEditAuthorForm" name="addEditAuthorForm" method="POST" action="ac?rType=saveAuthor">
-                <table class="table">
-                <tr>
-                    <td>
-                        Customer ID     
-                    </td>
-                    <td>
-                        <input type="text" id="authorId" name="authorId" readonly="readonly" value="${authorId}">
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        Customer Name   
-                    </td>
-                    <td>
-                        <input type="text" id="authorName" name="authorName" value="${authorName}">
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        Date Added
-                    </td>
-                    <td>
-                        <input type="text" id="dateAdded" name="dateAdded" readonly="readonly" value="${dateAdded}">
-                    </td>
-                </tr>  
+                <table class="table">  
+                    <c:if test="${not empty authorId}">
+                        <tr>
+                            <td>
+                                Customer ID     
+                            </td>
+                            <td>
+                                <input type="text" id="authorId" name="authorId" readonly="readonly" value="${authorId}">
+                            </td>
+                        </tr>
+                    </c:if>                     
+                    <tr>
+                        <td>
+                            Customer Name   
+                        </td>
+                        <td>
+                            <input type="text" id="authorName" name="authorName" value="${authorName}">
+                        </td>
+                    </tr>
+                    <c:if test="${not empty dateAdded}">
+                        <tr>
+                            <td>
+                                Date Added
+                            </td>
+                            <td>
+                                <input type="text" id="dateAdded" name="dateAdded" readonly="readonly" value="${dateAdded}">
+                            </td>
+                        </tr>  
+                    </c:if>
             </table>
                 <br>
                 <input type="submit" name="submit" value="Submit Changes">
