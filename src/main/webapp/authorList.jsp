@@ -16,12 +16,9 @@
                 Author List
             </h1>
             <br>
-            <form id="authorFormAdd" name="authorFormAdd" method="POST" action="ac?rType=addAuthor">
-                <input type="submit" name="submit" value="Add">
-            </form>  
-            <br>
             <form id="authorFormDelete" name="authorFormDelete" method="POST" action="ac?rType=deleteAuthor">  
-                <input type="submit" name="submit" value="Delete">
+                <button type="submit" formaction="ac?rType=addAuthor" name="add">Add</button>
+                <input type="submit" name="delete" value="Delete">
             <br>            
             <br>
             <table class="table">
@@ -37,6 +34,9 @@
                     </th>
                     <th>
                         Date Added
+                    </th>
+                    <th>
+                       
                     </th>
                 </tr>    
                 <c:forEach var="a" items="${authors}" varStatus="varStatus">
@@ -59,6 +59,9 @@
                                 </td>
                                 <td>
                                     <fmt:formatDate pattern="M/d/yyyy" value="${a.dateAdded}"/>                                 
+                                </td>
+                                <td>
+                                    <button type="submit" formaction="ac?rType=editAuthor&id=${a.authorId}" value="${a.authorId}" name="edit">Edit</button>
                                 </td>
                             </tr>  
                 </c:forEach>             

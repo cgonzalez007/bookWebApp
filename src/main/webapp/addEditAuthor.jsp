@@ -15,13 +15,14 @@
             <h1>
                 Add/Edit Author
             </h1>
-            <table class="table">
+            <form id="addEditAuthorForm" name="addEditAuthorForm" method="POST" action="ac?rType=saveAuthor">
+                <table class="table">
                 <tr>
                     <td>
                         Customer ID     
                     </td>
                     <td>
-                        
+                        <input type="text" id="authorId" name="authorId" readonly="readonly" value="${authorId}">
                     </td>
                 </tr>
                 <tr>
@@ -29,7 +30,7 @@
                         Customer Name   
                     </td>
                     <td>
-                        
+                        <input type="text" id="authorName" name="authorName" value="${authorName}">
                     </td>
                 </tr>
                 <tr>
@@ -37,16 +38,13 @@
                         Date Added
                     </td>
                     <td>
-                        
+                        <input type="text" id="dateAdded" name="dateAdded" readonly="readonly" value="${dateAdded}">
                     </td>
                 </tr>  
             </table>
-            <form id="addEditAuthorForm" name="addEditAuthorForm" method="POST" action="ac?rType=saveAuthor">
-                <input type="text" id="authorName" name="authorName" required="required">
-                <br>
                 <br>
                 <input type="submit" name="submit" value="Submit Changes">
-                <input type="submit" name="cancel" value="Cancel">
+                <button type="submit" formaction="ac?rType=authorList" name="cancel">Cancel</button>
             </form>
         </body>
     </div>    

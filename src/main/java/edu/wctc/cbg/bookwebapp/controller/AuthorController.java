@@ -6,6 +6,9 @@ import edu.wctc.cbg.bookwebapp.model.AuthorService;
 import edu.wctc.cbg.bookwebapp.model.MySqlDbAccessor;
 import java.io.IOException;
 import java.sql.SQLException;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.List;
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
@@ -33,13 +36,25 @@ public class AuthorController extends HttpServlet {
     public static final String RTYPE_HOME = "home";
     public static final String RTYPE_DELETE_AUTHOR = "deleteAuthor";
     public static final String RTYPE_ADD_AUTHOR = "addAuthor";
+    public static final String RTYPE_EDIT_AUTHOR = "editAuthor";
     public static final String RTYPE_SAVE_AUTHOR = "saveAuthor";
     
-    public static final String INPUT_NAME_AUTHOR_CHECKBOX = "authorId";
+    public static final String CHECKBOX_NAME_AUTHOR_ID = "authorId";
+    public static final String AUTHOR_ID = "id";
+    
+    public static final String INPUT_AUTHOR_ID = "authorId";
+    public static final String INPUT_AUTHOR_NAME = "authorName";
+    public static final String INPUT_DATE_ADDED = "dateAdded";
     
     public static final String AUTHOR_TABLE_NAME = "author";
     public static final String AUTHOR_ID_COL_NAME = "author_id";
+    public static final String AUTHOR_NAME_COL_NAME = "author_name";
+    public static final String DATE_ADDED_COL_NAME = "date_added";
     public static final int MAX_RECORDS = 50;
+    
+    private LocalDateTime currentDate;
+    private static final DateTimeFormatter dateTimeFormatter = 
+            DateTimeFormatter.ofPattern("yyyy-MM-dd");
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
      * methods.
@@ -70,7 +85,7 @@ public class AuthorController extends HttpServlet {
                 destination = destination = HOME_PAGE;
             }else if(requestType.equalsIgnoreCase(RTYPE_DELETE_AUTHOR)){
                 destination = AUTHOR_LIST_PAGE;
-                String[] authorsToDelete = request.getParameterValues(INPUT_NAME_AUTHOR_CHECKBOX);
+                String[] authorsToDelete = request.getParameterValues(CHECKBOX_NAME_AUTHOR_ID);
                 if(authorsToDelete != null){
                     for(String id : authorsToDelete){
                         authorService.deleteAuthorById(AUTHOR_TABLE_NAME, AUTHOR_ID_COL_NAME, id);
@@ -79,14 +94,40 @@ public class AuthorController extends HttpServlet {
                 refreshResults(request, authorService);
             }else if(requestType.equalsIgnoreCase(RTYPE_ADD_AUTHOR)){
                 destination = ADD_EDIT_AUTHOR_PAGE;
+            }else if(requestType.equalsIgnoreCase(RTYPE_EDIT_AUTHOR)){
+                destination = ADD_EDIT_AUTHOR_PAGE;
                 
+                String id  = request.getParameter(AUTHOR_ID);
+                Author author = authorService.retrieveAuthor(AUTHOR_TABLE_NAME, AUTHOR_ID_COL_NAME, id);
+                request.setAttribute(INPUT_AUTHOR_ID, author.getAuthorId());
+                request.setAttribute(INPUT_AUTHOR_NAME, author.getAuthorName());
+                request.setAttribute(INPUT_DATE_ADDED, author.getDateAdded());
+            }else if(requestType.equalsIgnoreCase(RTYPE_SAVE_AUTHOR)){
+                destination = AUTHOR_LIST_PAGE;
                 
-                // NOT DONE
+                String authorName = request.getParameter(INPUT_AUTHOR_NAME);
+                String id = request.getParameter(INPUT_AUTHOR_ID);
                 
-                
-                
-                
-                
+                if(id == null || id.isEmpty()){
+                    currentDate = LocalDateTime.now();
+
+                    List<String> colNames = new ArrayList<>();
+                    colNames.add(AUTHOR_NAME_COL_NAME);
+                    colNames.add(DATE_ADDED_COL_NAME);
+                    List<Object> colValues = new ArrayList<>();
+                    colValues.add(authorName);
+                    colValues.add(dateTimeFormatter.format(currentDate));
+
+                    authorService.addNewAuthor(AUTHOR_TABLE_NAME, 
+                            colNames, colValues);
+                }else{                    
+                    List<String> colNames = new ArrayList<>();
+                    colNames.add(AUTHOR_NAME_COL_NAME);
+                    List<Object> colValues = new ArrayList<>();
+                    colValues.add(authorName);
+                    authorService.updateAuthorById(AUTHOR_TABLE_NAME, colNames, 
+                                colValues, AUTHOR_ID_COL_NAME, id);
+                }
                 refreshResults(request, authorService);
             }else{
                 request.setAttribute("errMsg", ERROR_INVALID_PARAM);
