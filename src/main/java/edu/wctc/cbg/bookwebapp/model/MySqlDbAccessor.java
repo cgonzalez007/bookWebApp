@@ -57,6 +57,30 @@ public class MySqlDbAccessor implements DbAccessor {
             connection.close();
         }
     }
+    
+    @Override
+    public final Map<String,Object> getSingleRecord(String table, String 
+            idColName, String recordId)throws SQLException{
+        String sql = "SELECT * FROM " + table + " WHERE " + idColName + " = ?";
+
+        preparedStatement = connection.prepareStatement(sql);
+        preparedStatement.setObject(1, recordId);
+        resultSet = preparedStatement.executeQuery();
+        
+        ResultSetMetaData rsmd = resultSet.getMetaData();
+        int colCount = rsmd.getColumnCount();
+        
+        Map<String,Object> map = new LinkedHashMap<>();
+        
+        while(resultSet.next()){
+            for(int col = 1 ; col < colCount+1 ;col++){
+                map.put(rsmd.getColumnName(col), resultSet.getObject(col));
+            }
+        }
+
+        return map;
+    }
+    
     /**
      * Retrieve all records
      * @param table
@@ -210,23 +234,23 @@ public class MySqlDbAccessor implements DbAccessor {
 //        test.insertInto("author", colNames, colValues);
 
 
-        List<String> colNamesUpdate = new ArrayList<>();
-        colNamesUpdate.add("author_name");
-        colNamesUpdate.add("date_added");
-        List<Object> colValuesUpdate = new ArrayList<>();
-        colValuesUpdate.add("TEST TEST TEST");
-        colValuesUpdate.add("2011-11-11"); 
-
-
-        test.updateById("author", colNamesUpdate, colValuesUpdate, "author_id", "12");
+//        List<String> colNamesUpdate = new ArrayList<>();
+//        colNamesUpdate.add("author_name");
+//        colNamesUpdate.add("date_added");
+//        List<Object> colValuesUpdate = new ArrayList<>();
+//        colValuesUpdate.add("TEST TEST TEST");
+//        colValuesUpdate.add("2011-11-11"); 
+//
+//
+//        test.updateById("author", colNamesUpdate, colValuesUpdate, "author_id", "12");
+//        
+//
+//
+//
+//        List<Map<String,Object>> records = test.getAllRecords("author", 50);
         
-
-
-
-        List<Map<String,Object>> records = test.getAllRecords("author", 50);
-        
-        System.out.println(records);
-        
+        Map<String,Object> record = test.getSingleRecord("author", "author_id", "14");
+        System.out.println(record);
         test.closeConnection();
     }
 }

@@ -18,7 +18,7 @@
             <table class="table">
                 <tr>
                     <td>
-                        
+                        Customer ID     
                     </td>
                     <td>
                         
@@ -26,7 +26,7 @@
                 </tr>
                 <tr>
                     <td>
-                        
+                        Customer Name   
                     </td>
                     <td>
                         
@@ -34,13 +34,12 @@
                 </tr>
                 <tr>
                     <td>
-                        
+                        Date Added
                     </td>
                     <td>
                         
                     </td>
-                </tr>
-                    
+                </tr>  
             </table>
             <form id="addEditAuthorForm" name="addEditAuthorForm" method="POST" action="ac?rType=saveAuthor">
                 <input type="text" id="authorName" name="authorName" required="required">

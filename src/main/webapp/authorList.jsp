@@ -16,10 +16,12 @@
                 Author List
             </h1>
             <br>
-            <form id="authorForm" name="authorForm" method="POST" action="ac?rType=addAuthor">
-                <input type="submit" name="add" value="Add">
-            <form id="authorForm" name="authorForm" method="POST" action="ac?rType=deleteAuthor">    
-                <input type="submit" name="delete" value="Delete">
+            <form id="authorFormAdd" name="authorFormAdd" method="POST" action="ac?rType=addAuthor">
+                <input type="submit" name="submit" value="Add">
+            </form>  
+            <br>
+            <form id="authorFormDelete" name="authorFormDelete" method="POST" action="ac?rType=deleteAuthor">  
+                <input type="submit" name="submit" value="Delete">
             <br>            
             <br>
             <table class="table">

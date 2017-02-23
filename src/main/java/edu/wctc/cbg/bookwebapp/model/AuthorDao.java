@@ -17,6 +17,10 @@ public class AuthorDao implements IAuthorDao {
     private String url;
     private String userName;
     private String password;
+    
+    private static final String AUTHOR_ID_COL_NAME = "author_id";
+    private static final String AUTHOR_NAME_COL_NAME = "author_name";
+    private static final String DATE_ADDED_COL_NAME = "date_added";
 
     public AuthorDao(DbAccessor db, String driverClass, String url, String 
             userName, String password) {
@@ -37,6 +41,34 @@ public class AuthorDao implements IAuthorDao {
     }
     
     @Override
+    public final Author retrieveAuthor(String authorTableName, String 
+            authorIdColName, String authorId)throws ClassNotFoundException, 
+            SQLException {
+        db.openConnection(driverClass, url, userName, password);
+        
+        Map<String,Object> rawRec = db.getSingleRecord(
+                authorTableName, authorIdColName, authorId);
+        
+        Author author = new Author();
+        
+        Object objId = rawRec.get(AUTHOR_ID_COL_NAME);
+        Integer id = (Integer)objId;
+        author.setAuthorId(id);
+
+        Object objName = rawRec.get(AUTHOR_NAME_COL_NAME);
+        String authorName = (objName != null) ? objName.toString() : "";
+        author.setAuthorName(authorName);
+
+        Object objDateAdded = rawRec.get(DATE_ADDED_COL_NAME);
+        Date dateAdded = (objDateAdded != null) ? (Date)objDateAdded : null;
+        author.setDateAdded(dateAdded);
+        
+        db.closeConnection();
+        
+        return author;
+    }
+    
+    @Override
     public final List<Author> getAuthorList(String tableName, int maxRecords) 
             throws ClassNotFoundException, SQLException{
         db.openConnection(driverClass, url, userName, password);
@@ -48,15 +80,15 @@ public class AuthorDao implements IAuthorDao {
         for(Map<String,Object> rawRec : rawData){
             Author author = new Author();
             
-            Object objId = rawRec.get("author_id");
+            Object objId = rawRec.get(AUTHOR_ID_COL_NAME);
             Integer authorId = (Integer)objId;
             author.setAuthorId(authorId);
             
-            Object objName = rawRec.get("author_name");
+            Object objName = rawRec.get(AUTHOR_NAME_COL_NAME);
             String authorName = (objName != null) ? objName.toString() : "";
             author.setAuthorName(authorName);
             
-            Object objDateAdded = rawRec.get("date_added");
+            Object objDateAdded = rawRec.get(DATE_ADDED_COL_NAME);
             Date dateAdded = (objDateAdded != null) ? (Date)objDateAdded : null;
             author.setDateAdded(dateAdded);
             
@@ -198,21 +230,23 @@ public class AuthorDao implements IAuthorDao {
 //        colValues.add("2011-01-27");
 //        test.addNewAuthor("author", colNames, colValues);
         
-        List<String> colNamesUpdate = new ArrayList<>();
-        colNamesUpdate.add("author_name");
-        colNamesUpdate.add("date_added");
-        List<Object> colValuesUpdate = new ArrayList<>();
-        colValuesUpdate.add("THIS IS A TEST");
-        colValuesUpdate.add("1981-12-12"); 
-
-        test.updateAuthorById("author", colNamesUpdate, colValuesUpdate, "author_id", "12");
-
-
-
-
-        List<Author> authors = test.getAuthorList("author", 50);
+//        List<String> colNamesUpdate = new ArrayList<>();
+//        colNamesUpdate.add("author_name");
+//        colNamesUpdate.add("date_added");
+//        List<Object> colValuesUpdate = new ArrayList<>();
+//        colValuesUpdate.add("THIS IS A TEST");
+//        colValuesUpdate.add("1981-12-12"); 
+//
+//        test.updateAuthorById("author", colNamesUpdate, colValuesUpdate, "author_id", "12");
+//
+//
+//
+//
+//        List<Author> authors = test.getAuthorList("author", 50);
         
-        System.out.println(authors);
+        Author author = test.retrieveAuthor("author", "author_id", "14");
+        
+        System.out.println(author);
         
     }
 }

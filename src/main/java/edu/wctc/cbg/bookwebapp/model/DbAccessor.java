@@ -45,7 +45,10 @@ public interface DbAccessor {
      */        
     public abstract List<Map<String, Object>> getAllRecords(String table,
             int maxRecords) throws SQLException;
-
+    
+    public abstract Map<String,Object> getSingleRecord(String table, String 
+            idColName, String recordId)throws SQLException;
+    
     public int updateById(String tableName, List<String> colNamesToSet, 
             List<Object> colValues, String conditionColName, Object 
                     conditionColValue) throws SQLException;

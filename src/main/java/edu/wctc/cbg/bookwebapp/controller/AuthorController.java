@@ -88,17 +88,6 @@ public class AuthorController extends HttpServlet {
                 
                 
                 refreshResults(request, authorService);
-            }else if(requestType.equalsIgnoreCase(RTYPE_ADD_AUTHOR)){
-                destination = ADD_EDIT_AUTHOR_PAGE;
-                
-                
-                // NOT DONE
-                
-                
-                
-                
-                
-                refreshResults(request, authorService);
             }else{
                 request.setAttribute("errMsg", ERROR_INVALID_PARAM);
             }

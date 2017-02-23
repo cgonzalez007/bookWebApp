@@ -15,6 +15,10 @@ public interface IAuthorDao {
     public abstract List<Author> getAuthorList(String tableName, int maxRecords) 
             throws ClassNotFoundException, SQLException;
     
+    public abstract Author retrieveAuthor(String authorTableName, String 
+            authorIdColName, String authorId)throws ClassNotFoundException, 
+            SQLException;
+    
     public abstract int deleteAuthorById(String tableName, String authorIdColName,
             Object authorId) throws ClassNotFoundException, SQLException;
     
