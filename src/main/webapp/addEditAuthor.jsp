@@ -20,7 +20,7 @@
                     <c:if test="${not empty authorId}">
                         <tr>
                             <td>
-                                Customer ID     
+                                Author ID     
                             </td>
                             <td>
                                 <input type="text" id="authorId" name="authorId" readonly="readonly" value="${authorId}">
@@ -29,7 +29,7 @@
                     </c:if>                     
                     <tr>
                         <td>
-                            Customer Name   
+                            Author Name   
                         </td>
                         <td>
                             <input type="text" id="authorName" name="authorName" value="${authorName}">
