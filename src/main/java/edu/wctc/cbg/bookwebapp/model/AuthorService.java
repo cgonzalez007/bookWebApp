@@ -9,43 +9,95 @@ import java.util.List;
  */
 public class AuthorService {
     private IAuthorDao authorDao;
-
+    /**
+     * 
+     * @param authorDao 
+     */
     public AuthorService(IAuthorDao authorDao) {
         setAuthorDao(authorDao);
     }
-
+    /**
+     * 
+     * @param tableName
+     * @param maxRecords
+     * @return
+     * @throws ClassNotFoundException
+     * @throws SQLException 
+     */
     public final List<Author> retrieveAuthors(String tableName, int maxRecords) 
             throws ClassNotFoundException, SQLException{
         return authorDao.getAuthorList(tableName,maxRecords);
     }
-    
+    /**
+     * 
+     * @param authorTableName
+     * @param authorIdColName
+     * @param authorId
+     * @return
+     * @throws ClassNotFoundException
+     * @throws SQLException 
+     */
     public final Author retrieveAuthor(String authorTableName, String
             authorIdColName, String authorId) throws ClassNotFoundException, 
             SQLException{
         return authorDao.retrieveAuthor(authorTableName, authorIdColName, authorId);
     }
-    
+    /**
+     * 
+     * @param authorTableName
+     * @param authorIdColName
+     * @param authorId
+     * @return
+     * @throws ClassNotFoundException
+     * @throws SQLException 
+     */
     public final int deleteAuthorById(String authorTableName, String authorIdColName,
             String authorId) throws ClassNotFoundException, SQLException{
         return authorDao.deleteAuthorById(authorTableName, authorIdColName, authorId);
     }
+    /**
+     * 
+     * @param authorTableName
+     * @param colNames
+     * @param colValues
+     * @param authorIdColName
+     * @param authorId
+     * @return
+     * @throws ClassNotFoundException
+     * @throws SQLException 
+     */
     public final int updateAuthorById(String authorTableName, List<String> colNames, 
             List<Object> colValues, String authorIdColName, Object authorId) 
             throws ClassNotFoundException, SQLException{
         return authorDao.updateAuthorById(authorTableName, colNames, colValues, 
                 authorIdColName, authorId);
     }
+    /**
+     * 
+     * @param authorTableName
+     * @param authorTableColNames
+     * @param authorTableColValues
+     * @return
+     * @throws ClassNotFoundException
+     * @throws SQLException 
+     */
     public final int addNewAuthor(String authorTableName, List<String> authorTableColNames,
             List<Object> authorTableColValues) throws ClassNotFoundException, 
             SQLException{
         return authorDao.addNewAuthor(authorTableName, authorTableColNames, 
                 authorTableColValues);
     }
-    
+    /**
+     * 
+     * @return 
+     */
     public final IAuthorDao getAuthorDao() {
         return authorDao;
     }
-
+    /**
+     * 
+     * @param authorDao 
+     */
     public final void setAuthorDao(IAuthorDao authorDao) {
         //VALIDATE
         this.authorDao = authorDao;

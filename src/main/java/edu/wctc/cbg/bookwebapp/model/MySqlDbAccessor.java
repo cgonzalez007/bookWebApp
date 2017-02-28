@@ -50,14 +50,24 @@ public class MySqlDbAccessor implements DbAccessor {
         Class.forName(driverClass);
         connection = DriverManager.getConnection(url,userName,password);
     }
-    
+    /**
+     * 
+     * @throws SQLException 
+     */
     @Override
     public final void closeConnection() throws SQLException{
         if(connection!= null){
             connection.close();
         }
     }
-    
+    /**
+     * 
+     * @param table
+     * @param idColName
+     * @param recordId
+     * @return
+     * @throws SQLException 
+     */
     @Override
     public final Map<String,Object> getSingleRecord(String table, String 
             idColName, String recordId)throws SQLException{
@@ -80,7 +90,6 @@ public class MySqlDbAccessor implements DbAccessor {
 
         return map;
     }
-    
     /**
      * Retrieve all records
      * @param table
@@ -145,7 +154,16 @@ public class MySqlDbAccessor implements DbAccessor {
             
         return recordsDeleted;
     }
-    
+    /**
+     * 
+     * @param tableName
+     * @param colNames
+     * @param colValues
+     * @param idColName
+     * @param idColValue
+     * @return
+     * @throws SQLException 
+     */
     @Override
     public final int updateById(String tableName, List<String> colNames, 
             List<Object> colValues, String idColName, Object 
@@ -178,7 +196,14 @@ public class MySqlDbAccessor implements DbAccessor {
 
         return recordsUpdated;
     }
-    
+    /**
+     * 
+     * @param tableName
+     * @param colNames
+     * @param colValues
+     * @return
+     * @throws SQLException 
+     */
     @Override
     public final int insertInto(String tableName, List<String> colNames, List<Object> 
             colValues) throws SQLException{

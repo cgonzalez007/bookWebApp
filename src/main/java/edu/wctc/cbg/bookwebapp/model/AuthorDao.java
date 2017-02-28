@@ -21,7 +21,14 @@ public class AuthorDao implements IAuthorDao {
     private static final String AUTHOR_ID_COL_NAME = "author_id";
     private static final String AUTHOR_NAME_COL_NAME = "author_name";
     private static final String DATE_ADDED_COL_NAME = "date_added";
-
+    /**
+     * 
+     * @param db
+     * @param driverClass
+     * @param url
+     * @param userName
+     * @param password 
+     */
     public AuthorDao(DbAccessor db, String driverClass, String url, String 
             userName, String password) {
         setDb(db);
@@ -30,7 +37,15 @@ public class AuthorDao implements IAuthorDao {
         setUserName(userName);
         setPassword(password);
     }
-    
+    /**
+     * 
+     * @param tableName
+     * @param authorIdColName
+     * @param authorId
+     * @return
+     * @throws ClassNotFoundException
+     * @throws SQLException 
+     */
     @Override
     public final int deleteAuthorById(String tableName, String authorIdColName, 
             Object authorId) throws ClassNotFoundException, SQLException{
@@ -39,7 +54,15 @@ public class AuthorDao implements IAuthorDao {
         db.closeConnection();
         return recsDeleted;
     }
-    
+    /**
+     * 
+     * @param authorTableName
+     * @param authorIdColName
+     * @param authorId
+     * @return
+     * @throws ClassNotFoundException
+     * @throws SQLException 
+     */
     @Override
     public final Author retrieveAuthor(String authorTableName, String 
             authorIdColName, String authorId)throws ClassNotFoundException, 
@@ -67,7 +90,14 @@ public class AuthorDao implements IAuthorDao {
         
         return author;
     }
-    
+    /**
+     * 
+     * @param tableName
+     * @param maxRecords
+     * @return
+     * @throws ClassNotFoundException
+     * @throws SQLException 
+     */
     @Override
     public final List<Author> getAuthorList(String tableName, int maxRecords) 
             throws ClassNotFoundException, SQLException{
@@ -98,6 +128,17 @@ public class AuthorDao implements IAuthorDao {
         
         return records;
     }
+    /**
+     * 
+     * @param authorTableName
+     * @param colNames
+     * @param colValues
+     * @param authorIdColName
+     * @param authorId
+     * @return
+     * @throws SQLException
+     * @throws ClassNotFoundException 
+     */
     @Override
     public final int updateAuthorById(String authorTableName, List<String> colNames, 
             List<Object> colValues, String authorIdColName, Object authorId) 
@@ -109,6 +150,15 @@ public class AuthorDao implements IAuthorDao {
         db.closeConnection();
         return authorRecordsUpdated;
     }
+    /**
+     * 
+     * @param tableName
+     * @param authorTableColNames
+     * @param authorTableColValues
+     * @return
+     * @throws ClassNotFoundException
+     * @throws SQLException 
+     */
     @Override
     public final int addNewAuthor(String tableName, List<String> 
             authorTableColNames, List<Object> authorTableColValues) 
@@ -119,63 +169,95 @@ public class AuthorDao implements IAuthorDao {
         db.closeConnection();
         return authorsAdded;
     }
-    
-
+    /**
+     * 
+     * @return 
+     */
     @Override
     public final DbAccessor getDb() {
         return db;
     }
-
+    /**
+     * 
+     * @param db 
+     */
     @Override
     public final void setDb(DbAccessor db) {
         //VALIDATE
         this.db = db;
     }
-
+    /**
+     * 
+     * @return 
+     */
     @Override
     public final String getDriverClass() {
         return driverClass;
     }
-
+    /**
+     * 
+     * @param driverClass 
+     */
     @Override
     public final void setDriverClass(String driverClass) {
         //VALIDATE
         this.driverClass = driverClass;
     }
-
+    /**
+     * 
+     * @return 
+     */
     @Override
     public final String getUrl() {
         return url;
     }
-
+    /**
+     * 
+     * @param url 
+     */
     @Override
     public final void setUrl(String url) {
         //VALIDATE
         this.url = url;
     }
-
+    /**
+     * 
+     * @return 
+     */
     @Override
     public final String getUserName() {
         return userName;
     }
-
+    /**
+     * 
+     * @param userName 
+     */
     @Override
     public final void setUserName(String userName) {
         //VALIDATE
         this.userName = userName;
     }
-
+    /**
+     * 
+     * @return 
+     */
     @Override
     public final String getPassword() {
         return password;
     }
-
+    /**
+     * 
+     * @param password 
+     */
     @Override
     public final void setPassword(String password) {
         //VALIDATE
         this.password = password;
     }
-
+    /**
+     * 
+     * @return 
+     */
     @Override
     public final int hashCode() {
         int hash = 3;
@@ -185,7 +267,11 @@ public class AuthorDao implements IAuthorDao {
         hash = 97 * hash + Objects.hashCode(this.password);
         return hash;
     }
-
+    /**
+     * 
+     * @param obj
+     * @return 
+     */
     @Override
     public final boolean equals(Object obj) {
         if (this == obj) {
