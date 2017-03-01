@@ -4,8 +4,8 @@ import java.sql.SQLException;
 import java.util.List;
 
 /**
- *
- * @author cgonz
+ * 
+ * @author Chris Gonzalez 2017
  */
 public interface IAuthorDao {
     /**

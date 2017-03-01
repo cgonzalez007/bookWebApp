@@ -4,9 +4,8 @@ import java.util.Date;
 import java.util.Objects;
 
 /**
- * This is a domain object, also called an "entity" object. 
  * 
- * @author jlombardo
+ * @author Chris Gonzalez 2017
  */
 public class Author {
     private final String NULL_MSG = " cannot be null";

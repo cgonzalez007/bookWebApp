@@ -5,8 +5,8 @@ import java.util.List;
 import java.util.Map;
 
 /**
- *
- * @author cgonz
+ * 
+ * @author Chris Gonzalez 2017
  */
 public interface DbAccessor {
     /**

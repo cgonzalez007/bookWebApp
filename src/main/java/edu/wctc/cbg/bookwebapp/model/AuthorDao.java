@@ -8,7 +8,7 @@ import java.util.Map;
 import java.util.Objects;
 
 /**
- *
+ * 
  * @author Chris Gonzalez 2017
  */
 public class AuthorDao implements IAuthorDao {
@@ -21,6 +21,9 @@ public class AuthorDao implements IAuthorDao {
     private static final String AUTHOR_ID_COL_NAME = "author_id";
     private static final String AUTHOR_NAME_COL_NAME = "author_name";
     private static final String DATE_ADDED_COL_NAME = "date_added";
+    
+    private static final int MIN_MAX_RECORDS_PARAMETER = 1;
+
     /**
      * 
      * @param db
@@ -39,7 +42,7 @@ public class AuthorDao implements IAuthorDao {
     }
     /**
      * 
-     * @param tableName
+     * @param authorTableName
      * @param authorIdColName
      * @param authorId
      * @return
@@ -47,10 +50,15 @@ public class AuthorDao implements IAuthorDao {
      * @throws SQLException 
      */
     @Override
-    public final int deleteAuthorById(String tableName, String authorIdColName, 
-            Object authorId) throws ClassNotFoundException, SQLException{
+    public final int deleteAuthorById(String authorTableName, String authorIdColName, 
+            Object authorId) throws ClassNotFoundException, SQLException, 
+            IllegalArgumentException{
+        if(authorTableName == null || authorIdColName == null || authorId == null ||
+                authorTableName.isEmpty() || authorIdColName.isEmpty()){
+            throw new InvalidInputException();
+        }
         db.openConnection(driverClass, url, userName, password);
-        int recsDeleted = db.deleteById(tableName, authorIdColName, authorId);
+        int recsDeleted = db.deleteById(authorTableName, authorIdColName, authorId);
         db.closeConnection();
         return recsDeleted;
     }
@@ -66,7 +74,12 @@ public class AuthorDao implements IAuthorDao {
     @Override
     public final Author retrieveAuthor(String authorTableName, String 
             authorIdColName, String authorId)throws ClassNotFoundException, 
-            SQLException {
+            SQLException, IllegalArgumentException {
+        if(authorTableName == null || authorIdColName == null || authorId == null ||
+                authorTableName.isEmpty() || authorIdColName.isEmpty() ||
+                authorId.isEmpty()){
+            throw new InvalidInputException();
+        }
         db.openConnection(driverClass, url, userName, password);
         
         Map<String,Object> rawRec = db.getSingleRecord(
@@ -92,19 +105,23 @@ public class AuthorDao implements IAuthorDao {
     }
     /**
      * 
-     * @param tableName
+     * @param authorTableName
      * @param maxRecords
      * @return
      * @throws ClassNotFoundException
      * @throws SQLException 
      */
     @Override
-    public final List<Author> getAuthorList(String tableName, int maxRecords) 
-            throws ClassNotFoundException, SQLException{
+    public final List<Author> getAuthorList(String authorTableName, int maxRecords) 
+            throws ClassNotFoundException, SQLException,IllegalArgumentException{
+        if(authorTableName == null || authorTableName.isEmpty() || maxRecords <
+                MIN_MAX_RECORDS_PARAMETER){
+            throw new InvalidInputException();
+        }
         db.openConnection(driverClass, url, userName, password);
         
         List<Author> records = new ArrayList<>();      
-        List<Map<String, Object>> rawData = db.getAllRecords(tableName, 
+        List<Map<String, Object>> rawData = db.getAllRecords(authorTableName, 
                 maxRecords);
         
         for(Map<String,Object> rawRec : rawData){
@@ -140,9 +157,16 @@ public class AuthorDao implements IAuthorDao {
      * @throws ClassNotFoundException 
      */
     @Override
-    public final int updateAuthorById(String authorTableName, List<String> colNames, 
-            List<Object> colValues, String authorIdColName, Object authorId) 
-            throws SQLException, ClassNotFoundException{
+    public final int updateAuthorById(String authorTableName, List<String> 
+            colNames, List<Object> colValues, String authorIdColName, Object 
+            authorId) throws SQLException, ClassNotFoundException,
+            IllegalArgumentException{
+        if(authorTableName == null || colNames == null || colValues == null ||
+                authorIdColName ==null || authorId == null || 
+                authorTableName.isEmpty() || colNames.isEmpty() || 
+                colValues.isEmpty() || authorIdColName.isEmpty()){
+            throw new InvalidInputException();
+        }
         int authorRecordsUpdated = 0;
         db.openConnection(driverClass, url, userName, password);
         authorRecordsUpdated = db.updateById(authorTableName, colNames, 
@@ -152,7 +176,7 @@ public class AuthorDao implements IAuthorDao {
     }
     /**
      * 
-     * @param tableName
+     * @param authorTableName
      * @param authorTableColNames
      * @param authorTableColValues
      * @return
@@ -160,12 +184,18 @@ public class AuthorDao implements IAuthorDao {
      * @throws SQLException 
      */
     @Override
-    public final int addNewAuthor(String tableName, List<String> 
-            authorTableColNames, List<Object> authorTableColValues) 
-            throws ClassNotFoundException, SQLException{
+    public final int addNewAuthor(String authorTableName, List<String> 
+            authorTableColNames, List<Object> authorTableColValues) throws 
+            ClassNotFoundException, SQLException, IllegalArgumentException{
+        if(authorTableName == null || authorTableColNames == null || 
+                authorTableColValues == null || authorTableName.isEmpty() || 
+                authorTableColNames.isEmpty()|| authorTableColValues.isEmpty()){
+            throw new InvalidInputException();
+        }
         int authorsAdded = 0;
         db.openConnection(driverClass, url, userName, password);
-        authorsAdded = db.insertInto(tableName, authorTableColNames, authorTableColValues);
+        authorsAdded = db.insertInto(authorTableName, authorTableColNames, 
+                authorTableColValues);
         db.closeConnection();
         return authorsAdded;
     }
@@ -182,8 +212,10 @@ public class AuthorDao implements IAuthorDao {
      * @param db 
      */
     @Override
-    public final void setDb(DbAccessor db) {
-        //VALIDATE
+    public final void setDb(DbAccessor db) throws IllegalArgumentException {
+       if(db == null){
+           throw new InvalidInputException();
+       }
         this.db = db;
     }
     /**
@@ -199,8 +231,11 @@ public class AuthorDao implements IAuthorDao {
      * @param driverClass 
      */
     @Override
-    public final void setDriverClass(String driverClass) {
-        //VALIDATE
+    public final void setDriverClass(String driverClass) throws 
+            IllegalArgumentException {
+       if(driverClass == null){
+           throw new InvalidInputException();
+       }
         this.driverClass = driverClass;
     }
     /**
@@ -216,8 +251,10 @@ public class AuthorDao implements IAuthorDao {
      * @param url 
      */
     @Override
-    public final void setUrl(String url) {
-        //VALIDATE
+    public final void setUrl(String url) throws IllegalArgumentException {
+       if(url == null){
+           throw new InvalidInputException();
+       }
         this.url = url;
     }
     /**
@@ -233,8 +270,11 @@ public class AuthorDao implements IAuthorDao {
      * @param userName 
      */
     @Override
-    public final void setUserName(String userName) {
-        //VALIDATE
+    public final void setUserName(String userName) throws 
+            IllegalArgumentException {
+       if(userName == null){
+           throw new InvalidInputException();
+       }
         this.userName = userName;
     }
     /**
@@ -250,8 +290,11 @@ public class AuthorDao implements IAuthorDao {
      * @param password 
      */
     @Override
-    public final void setPassword(String password) {
-        //VALIDATE
+    public final void setPassword(String password) throws 
+            IllegalArgumentException {
+       if(password == null){
+           throw new InvalidInputException();
+       }
         this.password = password;
     }
     /**
@@ -297,42 +340,11 @@ public class AuthorDao implements IAuthorDao {
             return false;
         }
         return true;
-    }   
-    //TESTING PURPOSES
-    public static void main(String[] args) throws ClassNotFoundException, SQLException {
-        AuthorDao test = new AuthorDao(new MySqlDbAccessor(),
-                "com.mysql.jdbc.Driver", 
-                        "jdbc:mysql://localhost:3306/book", 
-                        "root", "admin");
-        
-        
-//        test.deleteAuthorById("author", "author_id", "5");
-
-//        List<String> colNames = new ArrayList<>();
-//        colNames.add("author_name");
-//        colNames.add("date_added");
-//        List<Object> colValues = new ArrayList<>();
-//        colValues.add("Alex Trebek");
-//        colValues.add("2011-01-27");
-//        test.addNewAuthor("author", colNames, colValues);
-        
-//        List<String> colNamesUpdate = new ArrayList<>();
-//        colNamesUpdate.add("author_name");
-//        colNamesUpdate.add("date_added");
-//        List<Object> colValuesUpdate = new ArrayList<>();
-//        colValuesUpdate.add("THIS IS A TEST");
-//        colValuesUpdate.add("1981-12-12"); 
-//
-//        test.updateAuthorById("author", colNamesUpdate, colValuesUpdate, "author_id", "12");
-//
-//
-//
-//
-//        List<Author> authors = test.getAuthorList("author", 50);
-        
-        Author author = test.retrieveAuthor("author", "author_id", "14");
-        
-        System.out.println(author);
-        
     }
+
+    @Override
+    public final String toString() {
+        return "AuthorDao";
+    }
+    
 }

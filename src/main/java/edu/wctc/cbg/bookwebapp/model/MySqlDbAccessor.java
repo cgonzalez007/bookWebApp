@@ -14,21 +14,17 @@ import java.util.Map;
 import java.util.StringJoiner;
 
 /**
- * In order to open connection:
- *  test.openConnection("com.mysql.jdbc.Driver", 
-                        "jdbc:mysql://localhost:3306/book", 
-                        "root", "admin");
-
- * @author Chris Gonzalez
+ * 
+ * @author Chris Gonzalez 2017
  */
 public class MySqlDbAccessor implements DbAccessor {
     private Connection connection;
     private Statement statement;
     private ResultSet resultSet;
     private PreparedStatement preparedStatement;
-    private static final String ERROR_INVALID_INPUT = "Error: Invalid input. "
-            + "Input cannot be null or empty. Number values cannot be less than"
-            + "1.";
+
+    private static final int MIN_MAX_RECORDS_PARAMETER = 1;
+
     /**
      * Open database connection
      * @param driverClass
@@ -44,9 +40,8 @@ public class MySqlDbAccessor implements DbAccessor {
         if(driverClass.isEmpty() || driverClass == null || userName.isEmpty() ||
                 userName == null || password.isEmpty() || password == null ||
                 url.isEmpty() || url == null){        
-            throw new IllegalArgumentException(ERROR_INVALID_INPUT);
+            throw new InvalidInputException();
         }
-        
         Class.forName(driverClass);
         connection = DriverManager.getConnection(url,userName,password);
     }
@@ -70,7 +65,13 @@ public class MySqlDbAccessor implements DbAccessor {
      */
     @Override
     public final Map<String,Object> getSingleRecord(String table, String 
-            idColName, String recordId)throws SQLException{
+            idColName, String recordId)throws SQLException, 
+            IllegalArgumentException{
+        if(table == null || idColName == null || recordId == null || 
+                table.isEmpty() || idColName.isEmpty() || recordId.isEmpty()){
+            throw new InvalidInputException();
+        }
+        
         String sql = "SELECT * FROM " + table + " WHERE " + idColName + " = ?";
 
         preparedStatement = connection.prepareStatement(sql);
@@ -100,8 +101,9 @@ public class MySqlDbAccessor implements DbAccessor {
     @Override
     public final List<Map<String,Object>> getAllRecords(String table, int maxRecords) 
             throws SQLException{
-        if(table == null || table.isEmpty()){
-            throw new IllegalArgumentException(ERROR_INVALID_INPUT);
+        if(table == null || table.isEmpty() || maxRecords <
+                MIN_MAX_RECORDS_PARAMETER){
+            throw new InvalidInputException();
         }
         String sql = "";
         
@@ -142,7 +144,7 @@ public class MySqlDbAccessor implements DbAccessor {
             SQLException{
         if(table == null ||table.isEmpty() || pkName == null || pkName.isEmpty() 
                 || id == null){
-            throw new IllegalArgumentException(ERROR_INVALID_INPUT);
+            throw new InvalidInputException();
         }
         int recordsDeleted = 0;
         String sql = "DELETE FROM  " + table + " WHERE " + pkName + 
@@ -168,10 +170,11 @@ public class MySqlDbAccessor implements DbAccessor {
     public final int updateById(String tableName, List<String> colNames, 
             List<Object> colValues, String idColName, Object 
                     idColValue) throws SQLException{
-        if(tableName == null || tableName.isEmpty() || colNames == null ||
-                colValues == null || idColName == null || 
-                idColName.isEmpty() || idColValue ==null){
-            throw new IllegalArgumentException(ERROR_INVALID_INPUT);
+        if(tableName == null  || colNames == null || colValues == null || 
+                idColName == null || idColValue ==null || idColName.isEmpty() 
+                || tableName.isEmpty() || colNames.isEmpty() || 
+                colValues.isEmpty()){
+            throw new InvalidInputException();
         }
         int recordsUpdated = 0;
         
@@ -208,8 +211,8 @@ public class MySqlDbAccessor implements DbAccessor {
     public final int insertInto(String tableName, List<String> colNames, List<Object> 
             colValues) throws SQLException{
         if(tableName == null || tableName.isEmpty() || colNames == null ||
-                colValues == null){
-             throw new IllegalArgumentException(ERROR_INVALID_INPUT);
+                colValues == null || colNames.isEmpty() || colValues.isEmpty()){
+             throw new InvalidInputException();
         }
         int recordsInserted = 0;
         
@@ -239,43 +242,5 @@ public class MySqlDbAccessor implements DbAccessor {
         recordsInserted = preparedStatement.executeUpdate();
         
         return recordsInserted;
-    }
-    //TESTING PURPOSES
-    public static void main(String[] args) throws ClassNotFoundException, SQLException {
-        MySqlDbAccessor test = new MySqlDbAccessor();
-        
-        test.openConnection("com.mysql.jdbc.Driver", 
-                        "jdbc:mysql://localhost:3306/book", 
-                        "root", "admin");
-//        test.deleteById("author", "author_id", "2");
-        
-        
-//        List<String> colNames = new ArrayList<>();
-//        colNames.add("author_name");
-//        colNames.add("date_added");
-//        List<Object> colValues = new ArrayList<>();
-//        colValues.add("Chris Gonzalez ");
-//        colValues.add("2017-02-17");
-//        test.insertInto("author", colNames, colValues);
-
-
-//        List<String> colNamesUpdate = new ArrayList<>();
-//        colNamesUpdate.add("author_name");
-//        colNamesUpdate.add("date_added");
-//        List<Object> colValuesUpdate = new ArrayList<>();
-//        colValuesUpdate.add("TEST TEST TEST");
-//        colValuesUpdate.add("2011-11-11"); 
-//
-//
-//        test.updateById("author", colNamesUpdate, colValuesUpdate, "author_id", "12");
-//        
-//
-//
-//
-//        List<Map<String,Object>> records = test.getAllRecords("author", 50);
-        
-        Map<String,Object> record = test.getSingleRecord("author", "author_id", "14");
-        System.out.println(record);
-        test.closeConnection();
     }
 }

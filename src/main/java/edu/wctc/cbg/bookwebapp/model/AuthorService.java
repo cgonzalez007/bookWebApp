@@ -2,12 +2,15 @@ package edu.wctc.cbg.bookwebapp.model;
 
 import java.sql.SQLException;
 import java.util.List;
+import java.util.Objects;
 
 /**
  *
  * @author Chris Gonzalez 2017
  */
 public class AuthorService {
+    private static final int MIN_MAX_RECORDS_PARAMETER = 1;
+
     private IAuthorDao authorDao;
     /**
      * 
@@ -18,15 +21,20 @@ public class AuthorService {
     }
     /**
      * 
-     * @param tableName
+     * @param authorTableName
      * @param maxRecords
      * @return
      * @throws ClassNotFoundException
      * @throws SQLException 
      */
-    public final List<Author> retrieveAuthors(String tableName, int maxRecords) 
-            throws ClassNotFoundException, SQLException{
-        return authorDao.getAuthorList(tableName,maxRecords);
+    public final List<Author> retrieveAuthors(String authorTableName, int maxRecords) 
+            throws ClassNotFoundException, SQLException, 
+            IllegalArgumentException{
+        if (authorTableName == null || authorTableName.isEmpty() || maxRecords < 
+                MIN_MAX_RECORDS_PARAMETER) {
+            throw new InvalidInputException();
+        }
+        return authorDao.getAuthorList(authorTableName,maxRecords);
     }
     /**
      * 
@@ -39,7 +47,12 @@ public class AuthorService {
      */
     public final Author retrieveAuthor(String authorTableName, String
             authorIdColName, String authorId) throws ClassNotFoundException, 
-            SQLException{
+            SQLException,IllegalArgumentException{
+        if (authorTableName == null || authorIdColName == null || 
+                authorId == null || authorTableName.isEmpty() ||
+                authorIdColName.isEmpty() || authorId.isEmpty()) {
+            throw new InvalidInputException();
+        }
         return authorDao.retrieveAuthor(authorTableName, authorIdColName, authorId);
     }
     /**
@@ -52,7 +65,13 @@ public class AuthorService {
      * @throws SQLException 
      */
     public final int deleteAuthorById(String authorTableName, String authorIdColName,
-            String authorId) throws ClassNotFoundException, SQLException{
+            String authorId) throws ClassNotFoundException, SQLException,
+            IllegalArgumentException{
+        if (authorTableName == null || authorIdColName == null || 
+                authorId == null || authorTableName.isEmpty() ||
+                authorIdColName.isEmpty() || authorId.isEmpty()) {
+            throw new InvalidInputException();
+        }
         return authorDao.deleteAuthorById(authorTableName, authorIdColName, authorId);
     }
     /**
@@ -68,7 +87,15 @@ public class AuthorService {
      */
     public final int updateAuthorById(String authorTableName, List<String> colNames, 
             List<Object> colValues, String authorIdColName, Object authorId) 
-            throws ClassNotFoundException, SQLException{
+            throws ClassNotFoundException, SQLException, 
+            IllegalArgumentException{
+        if (authorTableName == null || authorIdColName == null || 
+                colNames == null || colValues == null ||
+                authorId == null || authorTableName.isEmpty() ||
+                authorIdColName.isEmpty() || colNames.isEmpty() || 
+                colValues.isEmpty()) {
+            throw new InvalidInputException();
+        }
         return authorDao.updateAuthorById(authorTableName, colNames, colValues, 
                 authorIdColName, authorId);
     }
@@ -83,7 +110,12 @@ public class AuthorService {
      */
     public final int addNewAuthor(String authorTableName, List<String> authorTableColNames,
             List<Object> authorTableColValues) throws ClassNotFoundException, 
-            SQLException{
+            SQLException, IllegalArgumentException {
+        if (authorTableName == null || authorTableColNames == null || 
+                authorTableColValues == null || authorTableName.isEmpty() ||
+                authorTableColNames.isEmpty() || authorTableColValues.isEmpty()) {
+            throw new InvalidInputException();
+        }
         return authorDao.addNewAuthor(authorTableName, authorTableColNames, 
                 authorTableColValues);
     }
@@ -98,49 +130,42 @@ public class AuthorService {
      * 
      * @param authorDao 
      */
-    public final void setAuthorDao(IAuthorDao authorDao) {
-        //VALIDATE
+    public final void setAuthorDao(IAuthorDao authorDao) throws 
+            IllegalArgumentException{
+       if(authorDao == null){
+           throw new InvalidInputException();
+       }
         this.authorDao = authorDao;
     }
-    //TESTING PURPOSES
-    public static void main(String[] args) throws ClassNotFoundException, SQLException {
-        AuthorService test = new AuthorService(
-                new AuthorDao(
-                        new MySqlDbAccessor(),"com.mysql.jdbc.Driver", 
-                        "jdbc:mysql://localhost:3306/book", 
-                        "root", "admin")
-                        );
-//        
-//        List<String> colNames = new ArrayList<>();
-//        colNames.add("author_name");
-//        colNames.add("date_added");
-//        List<Object> colValues = new ArrayList<>();
-//        colValues.add("Sean Connery");
-//        colValues.add("2017-02-16");
-//        
-//        authorService.addNewAuthor("author", colNames, colValues);
-        
-                   
-//
-//        List<String> colNamesUpdate = new ArrayList<>();
-//        colNamesUpdate.add("author_name");
-//        colNamesUpdate.add("date_added");
-//        List<Object> colValuesUpdate = new ArrayList<>();
-//        colValuesUpdate.add("THIS IS ANOTHER TEST");
-//        colValuesUpdate.add("1999-01-01"); 
-//
-//        authorService.updateAuthorById("author", 
-//                colNamesUpdate, colValuesUpdate, "author_id", "12");
-//
-////        int recsDeleted = 
-////                authorService.deleteAuthorById("author", "author_id", "3");
-//        
-//        List<Author> authors = authorService.retrieveAuthors("author", 50);
-//        
-////        System.out.println("records deleted:   " + recsDeleted);
-//        System.out.println("\n\n"+authors);
 
-    Author author = test.retrieveAuthor("author", "author_id", "15");
-        System.out.println(author);
+    @Override
+    public final int hashCode() {
+        int hash = 5;
+        hash = 53 * hash + Objects.hashCode(this.authorDao);
+        return hash;
     }
+
+    @Override
+    public final boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final AuthorService other = (AuthorService) obj;
+        if (!Objects.equals(this.authorDao, other.authorDao)) {
+            return false;
+        }
+        return true;
+    }
+
+    @Override
+    public final String toString() {
+        return "AuthorService";
+    }
+    
 }

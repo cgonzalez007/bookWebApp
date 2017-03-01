@@ -25,13 +25,17 @@ import javax.servlet.http.HttpServletResponse;
 public class AuthorController extends HttpServlet {
     public static final String ERROR_INVALID_PARAM = "ERROR: Invalid Parameter";
     
+    /*pages*/
     public static final String HOME_PAGE = "/index.jsp";
     public static final String AUTHOR_LIST_PAGE = "/authorList.jsp";
     public static final String ADD_EDIT_AUTHOR_PAGE = "/addEditAuthor.jsp";
     
+    /*authors list attribute set by this controller class*/
     public static final String AUTHOR_LIST_ATTRIBUTE = "authors";
     
+    /*attribute's name used to indicate request type*/
     public static final String REQUEST_TYPE = "rType";
+    /*List of special request types that indicate an action to perform*/
     public static final String RTYPE_AUTHOR_LIST = "authorList";
     public static final String RTYPE_HOME = "home";
     public static final String RTYPE_DELETE_AUTHOR = "deleteAuthor";
@@ -39,22 +43,36 @@ public class AuthorController extends HttpServlet {
     public static final String RTYPE_EDIT_AUTHOR = "editAuthor";
     public static final String RTYPE_SAVE_AUTHOR = "saveAuthor";
     
+    /*Html check box used to determine what author to delete*/
     public static final String CHECKBOX_NAME_AUTHOR_ID = "authorId";
-    public static final String AUTHOR_ID = "id";
+    /*attribute sent through a query string to indicate which author to edit
+        info for*/
+    public static final String AUTHOR_ID_TO_EDIT = "id";
     
+    /*Html text inputs that display a specified author info*/
     public static final String INPUT_AUTHOR_ID = "authorId";
     public static final String INPUT_AUTHOR_NAME = "authorName";
     public static final String INPUT_DATE_ADDED = "dateAdded";
     
+    /**
+     * Db info
+     */
     public static final String AUTHOR_TABLE_NAME = "author";
     public static final String AUTHOR_ID_COL_NAME = "author_id";
     public static final String AUTHOR_NAME_COL_NAME = "author_name";
     public static final String DATE_ADDED_COL_NAME = "date_added";
     public static final int MAX_RECORDS = 50;
     
+    /*used for setting current datetime when adding new author to db*/
     private LocalDateTime currentDate;
     private static final DateTimeFormatter dateTimeFormatter = 
             DateTimeFormatter.ofPattern("yyyy-MM-dd");
+    
+    //Get init parameters from web.xml
+    private String driverClass;
+    private String url;
+    private String username;
+    private String password;
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
      * methods.
@@ -71,11 +89,9 @@ public class AuthorController extends HttpServlet {
         String destination = HOME_PAGE;
         try {
             AuthorService authorService = new AuthorService(
-                new AuthorDao(
-                        new MySqlDbAccessor(),"com.mysql.jdbc.Driver", 
-                        "jdbc:mysql://localhost:3306/book", 
-                        "root", "admin")
-                        );
+                new AuthorDao(new MySqlDbAccessor(),driverClass, url, username, 
+                        password));
+            
             if(requestType.equalsIgnoreCase(RTYPE_AUTHOR_LIST)){
                 destination = AUTHOR_LIST_PAGE;
                 List<Author> authors = authorService.retrieveAuthors(
@@ -97,7 +113,7 @@ public class AuthorController extends HttpServlet {
             }else if(requestType.equalsIgnoreCase(RTYPE_EDIT_AUTHOR)){
                 destination = ADD_EDIT_AUTHOR_PAGE;
                 
-                String id  = request.getParameter(AUTHOR_ID);
+                String id  = request.getParameter(AUTHOR_ID_TO_EDIT);
                 Author author = authorService.retrieveAuthor(AUTHOR_TABLE_NAME, AUTHOR_ID_COL_NAME, id);
                 request.setAttribute(INPUT_AUTHOR_ID, author.getAuthorId());
                 request.setAttribute(INPUT_AUTHOR_NAME, author.getAuthorName());
@@ -186,5 +202,12 @@ public class AuthorController extends HttpServlet {
     public String getServletInfo() {
         return "Short description";
     }// </editor-fold>
-
+    
+    @Override
+    public final void init() throws ServletException {
+        driverClass = getServletContext().getInitParameter("driverClass");
+        url = getServletContext().getInitParameter("url");
+        username = getServletContext().getInitParameter("username");
+        password = getServletContext().getInitParameter("password");
+    }
 }
