@@ -23,7 +23,7 @@
                                 Author ID     
                             </td>
                             <td>
-                                <input type="text" id="authorId" name="authorId" readonly="readonly" value="${authorId}">
+                                <input type="text" id="authorId" name="authorId" readonly="readonly" value="<c:out value="${authorId}"/>">
                             </td>
                         </tr>
                     </c:if>                     
@@ -32,7 +32,7 @@
                             Author Name   
                         </td>
                         <td>
-                            <input type="text" id="authorName" name="authorName" value="${authorName}">
+                            <input type="text" id="authorName" name="authorName" value="<c:out value="${authorName}"/>">
                         </td>
                     </tr>
                     <c:if test="${not empty dateAdded}">
@@ -41,7 +41,7 @@
                                 Date Added
                             </td>
                             <td>
-                                <input type="text" id="dateAdded" name="dateAdded" readonly="readonly" value="${dateAdded}">
+                                <input type="text" id="dateAdded" name="dateAdded" readonly="readonly" value="<c:out value="${dateAdded}"/>">
                             </td>
                         </tr>  
                     </c:if>

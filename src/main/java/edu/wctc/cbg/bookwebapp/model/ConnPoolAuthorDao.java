@@ -6,17 +6,21 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import javax.sql.DataSource;
 
 /**
+ * This DAO is a strategy object that uses a server-side connection pool to 
+ * optimize the creation and use of connections by a web app. 
+ * Such connections are VERY performant because they are created in advance, 
+ * stored in an in-memory pool and loaned out for quick access. When done the 
+ * connection is returned to the pool.
  * 
  * @author Chris Gonzalez 2017
  */
-public class AuthorDao implements IAuthorDao {
+public class ConnPoolAuthorDao implements IAuthorDao {
+    
+    private DataSource ds;
     private DbAccessor db;
-    private String driverClass;
-    private String url;
-    private String userName;
-    private String password;
     
     private static final String AUTHOR_ID_COL_NAME = "author_id";
     private static final String AUTHOR_NAME_COL_NAME = "author_name";
@@ -26,19 +30,12 @@ public class AuthorDao implements IAuthorDao {
 
     /**
      * 
+     * @param ds
      * @param db
-     * @param driverClass
-     * @param url
-     * @param userName
-     * @param password 
      */
-    public AuthorDao(DbAccessor db, String driverClass, String url, String 
-            userName, String password) {
+    public ConnPoolAuthorDao(DataSource ds, DbAccessor db) {
         setDb(db);
-        setDriverClass(driverClass);
-        setUrl(url);
-        setUserName(userName);
-        setPassword(password);
+        setDs(ds);
     }
     /**
      * 
@@ -57,7 +54,7 @@ public class AuthorDao implements IAuthorDao {
                 authorTableName.isEmpty() || authorIdColName.isEmpty()){
             throw new InvalidInputException();
         }
-        db.openConnection(driverClass, url, userName, password);
+        db.openConnection(ds);
         int recsDeleted = db.deleteById(authorTableName, authorIdColName, authorId);
         db.closeConnection();
         return recsDeleted;
@@ -80,7 +77,7 @@ public class AuthorDao implements IAuthorDao {
                 authorId.isEmpty()){
             throw new InvalidInputException();
         }
-        db.openConnection(driverClass, url, userName, password);
+        db.openConnection(ds);
         
         Map<String,Object> rawRec = db.getSingleRecord(
                 authorTableName, authorIdColName, authorId);
@@ -118,7 +115,7 @@ public class AuthorDao implements IAuthorDao {
                 MIN_MAX_RECORDS_PARAMETER){
             throw new InvalidInputException();
         }
-        db.openConnection(driverClass, url, userName, password);
+        db.openConnection(ds);
         
         List<Author> records = new ArrayList<>();      
         List<Map<String, Object>> rawData = db.getAllRecords(authorTableName, 
@@ -168,7 +165,7 @@ public class AuthorDao implements IAuthorDao {
             throw new InvalidInputException();
         }
         int authorRecordsUpdated = 0;
-        db.openConnection(driverClass, url, userName, password);
+       db.openConnection(ds);
         authorRecordsUpdated = db.updateById(authorTableName, colNames, 
                 colValues, authorIdColName, authorId);
         db.closeConnection();
@@ -193,7 +190,7 @@ public class AuthorDao implements IAuthorDao {
             throw new InvalidInputException();
         }
         int authorsAdded = 0;
-        db.openConnection(driverClass, url, userName, password);
+        db.openConnection(ds);
         authorsAdded = db.insertInto(authorTableName, authorTableColNames, 
                 authorTableColValues);
         db.closeConnection();
@@ -217,76 +214,16 @@ public class AuthorDao implements IAuthorDao {
        }
         this.db = db;
     }
-    /**
-     * 
-     * @return 
-     */
-    public final String getDriverClass() {
-        return driverClass;
+
+    public final DataSource getDs() {
+        return ds;
     }
-    /**
-     * 
-     * @param driverClass 
-     */
-    public final void setDriverClass(String driverClass) throws 
-            IllegalArgumentException {
-       if(driverClass == null){
+
+    public final void setDs(DataSource ds) throws IllegalArgumentException {
+        if(ds == null){
            throw new InvalidInputException();
        }
-        this.driverClass = driverClass;
-    }
-    /**
-     * 
-     * @return 
-     */
-    public final String getUrl() {
-        return url;
-    }
-    /**
-     * 
-     * @param url 
-     */
-    public final void setUrl(String url) throws IllegalArgumentException {
-       if(url == null){
-           throw new InvalidInputException();
-       }
-        this.url = url;
-    }
-    /**
-     * 
-     * @return 
-     */
-    public final String getUserName() {
-        return userName;
-    }
-    /**
-     * 
-     * @param userName 
-     */
-    public final void setUserName(String userName) throws 
-            IllegalArgumentException {
-       if(userName == null){
-           throw new InvalidInputException();
-       }
-        this.userName = userName;
-    }
-    /**
-     * 
-     * @return 
-     */
-    public final String getPassword() {
-        return password;
-    }
-    /**
-     * 
-     * @param password 
-     */
-    public final void setPassword(String password) throws 
-            IllegalArgumentException {
-       if(password == null){
-           throw new InvalidInputException();
-       }
-        this.password = password;
+        this.ds = ds;
     }
     /**
      * 
@@ -294,11 +231,9 @@ public class AuthorDao implements IAuthorDao {
      */
     @Override
     public final int hashCode() {
-        int hash = 3;
-        hash = 97 * hash + Objects.hashCode(this.driverClass);
-        hash = 97 * hash + Objects.hashCode(this.url);
-        hash = 97 * hash + Objects.hashCode(this.userName);
-        hash = 97 * hash + Objects.hashCode(this.password);
+        int hash = 7;
+        hash = 89 * hash + Objects.hashCode(this.ds);
+        hash = 89 * hash + Objects.hashCode(this.db);
         return hash;
     }
     /**
@@ -317,28 +252,23 @@ public class AuthorDao implements IAuthorDao {
         if (getClass() != obj.getClass()) {
             return false;
         }
-        final AuthorDao other = (AuthorDao) obj;
-        if (!Objects.equals(this.driverClass, other.driverClass)) {
+        final ConnPoolAuthorDao other = (ConnPoolAuthorDao) obj;
+        if (!Objects.equals(this.ds, other.ds)) {
             return false;
         }
-        if (!Objects.equals(this.url, other.url)) {
-            return false;
-        }
-        if (!Objects.equals(this.userName, other.userName)) {
-            return false;
-        }
-        if (!Objects.equals(this.password, other.password)) {
+        if (!Objects.equals(this.db, other.db)) {
             return false;
         }
         return true;
     }
+    
     /**
      * 
      * @return 
      */
     @Override
     public final String toString() {
-        return "AuthorDao";
+        return "ConnPoolAuthorDao";
     }
     
 }

@@ -10,6 +10,18 @@
     global to your app and can be accessed from any JSP page or
     servlet. -->
     <context-param>
+        <param-name>connPoolName</param-name>
+        <param-value>jdbc/book</param-value>
+    </context-param>
+    <context-param>
+        <param-name>authorDao</param-name>
+        <param-value>edu.wctc.cbg.bookwebapp.model.AuthorDao</param-value>
+    </context-param>
+    <context-param>
+        <param-name>dbStrategy</param-name>
+        <param-value>edu.wctc.cbg.bookwebapp.model.MySqlDbAccessor</param-value>
+    </context-param>
+    <context-param>
         <param-name>driverClass</param-name>
         <param-value>com.mysql.jdbc.Driver</param-value>
     </context-param>

@@ -82,52 +82,5 @@ public interface IAuthorDao {
      * 
      * @return 
      */
-    public abstract String getDriverClass();
-    /**
-     * 
-     * @return 
-     */
-    public abstract String getPassword();
-    /**
-     * 
-     * @return 
-     */
-    public abstract String getUrl();
-    /**
-     * 
-     * @return 
-     */
-    public abstract String getUserName();
-    /**
-     * 
-     * @return 
-     */
-    @Override
-    public abstract int hashCode();
-    /**
-     * 
-     * @param db 
-     */
-    public abstract void setDb(DbAccessor db);
-    /**
-     * 
-     * @param driverClass 
-     */
-    public abstract void setDriverClass(String driverClass);
-    /**
-     * 
-     * @param password 
-     */
-    public abstract void setPassword(String password);
-    /**
-     * 
-     * @param url 
-     */
-    public abstract void setUrl(String url);
-    /**
-     * 
-     * @param userName 
-     */
-    public abstract void setUserName(String userName);
     
 }

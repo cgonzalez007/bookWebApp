@@ -1,21 +1,25 @@
 package edu.wctc.cbg.bookwebapp.controller;
 
 import edu.wctc.cbg.bookwebapp.model.Author;
-import edu.wctc.cbg.bookwebapp.model.AuthorDao;
 import edu.wctc.cbg.bookwebapp.model.AuthorService;
-import edu.wctc.cbg.bookwebapp.model.MySqlDbAccessor;
+import edu.wctc.cbg.bookwebapp.model.DbAccessor;
+import edu.wctc.cbg.bookwebapp.model.IAuthorDao;
 import java.io.IOException;
+import java.lang.reflect.Constructor;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
+import javax.naming.Context;
+import javax.naming.InitialContext;
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.sql.DataSource;
 
 /**
  *
@@ -65,7 +69,7 @@ public class AuthorController extends HttpServlet {
     
     /*used for setting current datetime when adding new author to db*/
     private LocalDateTime currentDate;
-    private static final DateTimeFormatter dateTimeFormatter = 
+    private static final DateTimeFormatter DATE_TIME_FORMATTER = 
             DateTimeFormatter.ofPattern("yyyy-MM-dd");
     
     //Get init parameters from web.xml
@@ -73,6 +77,9 @@ public class AuthorController extends HttpServlet {
     private String url;
     private String username;
     private String password;
+    private String dbAccessorClassName;
+    private String daoClassName;
+    private String jndiName;
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
      * methods.
@@ -88,9 +95,7 @@ public class AuthorController extends HttpServlet {
         String requestType = request.getParameter(REQUEST_TYPE);
         String destination = HOME_PAGE;
         try {
-            AuthorService authorService = new AuthorService(
-                new AuthorDao(new MySqlDbAccessor(),driverClass, url, username, 
-                        password));
+            AuthorService authorService = injectDependenciesAndGetAuthorService();
             
             if(requestType.equalsIgnoreCase(RTYPE_AUTHOR_LIST)){
                 destination = AUTHOR_LIST_PAGE;
@@ -112,7 +117,8 @@ public class AuthorController extends HttpServlet {
                 destination = ADD_EDIT_AUTHOR_PAGE;
             }else if(requestType.equalsIgnoreCase(RTYPE_EDIT_AUTHOR)){
                 destination = ADD_EDIT_AUTHOR_PAGE;
-                
+                /*If we are editing customer information, we must retrieve the id of the 
+                author selected, based on an attribute created by a query string*/
                 String id  = request.getParameter(AUTHOR_ID_TO_EDIT);
                 Author author = authorService.retrieveAuthor(AUTHOR_TABLE_NAME, AUTHOR_ID_COL_NAME, id);
                 request.setAttribute(INPUT_AUTHOR_ID, author.getAuthorId());
@@ -123,7 +129,11 @@ public class AuthorController extends HttpServlet {
                 
                 String authorName = request.getParameter(INPUT_AUTHOR_NAME);
                 String id = request.getParameter(INPUT_AUTHOR_ID);
-                
+                /*If id is null/empty, that means we are not referencing an author 
+                already in the database, so we take the name entered, and current
+                date to add a new author in the database. Otherwise if id does 
+                contain a value, that means we are simply editing author information
+                so the name simply gets updated in the database.*/
                 if(id == null || id.isEmpty()){
                     currentDate = LocalDateTime.now();
 
@@ -132,7 +142,7 @@ public class AuthorController extends HttpServlet {
                     colNames.add(DATE_ADDED_COL_NAME);
                     List<Object> colValues = new ArrayList<>();
                     colValues.add(authorName);
-                    colValues.add(dateTimeFormatter.format(currentDate));
+                    colValues.add(DATE_TIME_FORMATTER.format(currentDate));
 
                     authorService.addNewAuthor(AUTHOR_TABLE_NAME, 
                             colNames, colValues);
@@ -156,6 +166,76 @@ public class AuthorController extends HttpServlet {
                 request.getRequestDispatcher(destination);
         view.forward(request, response);
     }
+    
+     /*
+        This helper method just makes the code more modular and readable.
+        It's single responsibility principle for a method.
+    */
+    private AuthorService injectDependenciesAndGetAuthorService() throws Exception {
+        // Use Liskov Substitution Principle and Java Reflection to
+        // instantiate the chosen DBStrategy based on the class name retrieved
+        // from web.xml
+        Class dbClass = Class.forName(dbAccessorClassName);
+        // Use Java reflection to instanntiate the DBStrategy object
+        // Note that DBStrategy classes have no constructor params
+        DbAccessor db = (DbAccessor) dbClass.newInstance();
+
+        // Use Liskov Substitution Principle and Java Reflection to
+        // instantiate the chosen DAO based on the class name retrieved above.
+        // This one is trickier because the available DAO classes have
+        // different constructor params
+        IAuthorDao authorDao = null;
+        Class daoClass = Class.forName(daoClassName);
+        Constructor constructor = null;
+        
+        // This will only work for the non-pooled AuthorDao
+        try {
+            constructor = daoClass.getConstructor(new Class[]{
+                DbAccessor.class, String.class, String.class, String.class, String.class
+            });
+        } catch(NoSuchMethodException nsme) {
+            // do nothing, the exception means that there is no such constructor,
+            // so code will continue executing below
+        }
+
+        // constructor will be null if using connectin pool dao because the
+        // constructor has a different number and type of arguments
+        
+        if (constructor != null) {
+            // conn pool NOT used so constructor has these arguments
+            Object[] constructorArgs = new Object[]{
+                db, driverClass, url, username, password
+            };
+            authorDao = (IAuthorDao) constructor
+                    .newInstance(constructorArgs);
+
+        } else {
+            /*
+             Here's what the connection pool version looks like. First
+             we lookup the JNDI name of the Glassfish connection pool
+             and then we use Java Refletion to create the needed
+             objects based on the servlet init params
+             */
+            Context ctx = new InitialContext();
+            /*For PCs ONLY*/
+            DataSource ds = (DataSource) ctx.lookup(jndiName);
+            /*For Macs ONLY*/
+//            Context envCtx = (Context) ctx.lookup("java:comp/env");
+//            DataSource ds = (DataSource) envCtx.lookup(jndiName);
+            constructor = daoClass.getConstructor(new Class[]{
+                DataSource.class, DbAccessor.class
+            });
+            Object[] constructorArgs = new Object[]{
+                ds, db
+            };
+
+            authorDao = (IAuthorDao) constructor
+                    .newInstance(constructorArgs);
+        }
+        
+        return new AuthorService(authorDao);
+    }
+
     
     private void refreshResults(HttpServletRequest request, AuthorService authorService) 
             throws ClassNotFoundException, SQLException{
@@ -209,5 +289,8 @@ public class AuthorController extends HttpServlet {
         url = getServletContext().getInitParameter("url");
         username = getServletContext().getInitParameter("username");
         password = getServletContext().getInitParameter("password");
+        dbAccessorClassName = getServletContext().getInitParameter("dbStrategy");
+        daoClassName = getServletContext().getInitParameter("authorDao");
+        jndiName = getServletContext().getInitParameter("connPoolName");
     }
 }
