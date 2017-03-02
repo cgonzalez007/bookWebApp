@@ -32,7 +32,7 @@
                             Author Name   
                         </td>
                         <td>
-                            <input type="text" id="authorName" name="authorName" value="<c:out value="${authorName}"/>">
+                            <input type="text" id="authorName" name="authorName" value="<c:out default="" value="${authorName}"/>">
                         </td>
                     </tr>
                     <c:if test="${not empty dateAdded}">

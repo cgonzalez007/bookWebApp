@@ -125,36 +125,49 @@ public class AuthorController extends HttpServlet {
                 request.setAttribute(INPUT_AUTHOR_NAME, author.getAuthorName());
                 request.setAttribute(INPUT_DATE_ADDED, author.getDateAdded());
             }else if(requestType.equalsIgnoreCase(RTYPE_SAVE_AUTHOR)){
-                destination = AUTHOR_LIST_PAGE;
-                
+
                 String authorName = request.getParameter(INPUT_AUTHOR_NAME);
                 String id = request.getParameter(INPUT_AUTHOR_ID);
-                /*If id is null/empty, that means we are not referencing an author 
-                already in the database, so we take the name entered, and current
-                date to add a new author in the database. Otherwise if id does 
-                contain a value, that means we are simply editing author information
-                so the name simply gets updated in the database.*/
-                if(id == null || id.isEmpty()){
-                    currentDate = LocalDateTime.now();
+                /*Test to check to see if authorName is null or empty. If it is, then the controller
+                will simply redirect the user to the same page (addEditAuthor)*/
+                if(authorName != null && !authorName.isEmpty()){
+                    destination = AUTHOR_LIST_PAGE;
+                    /*If id is null/empty, that means we are not referencing an author 
+                    already in the database, so we take the name entered, and current
+                    date to add a new author in the database. Otherwise if id does 
+                    contain a value, that means we are simply editing author information
+                    so the name simply gets updated in the database.*/
+                    if(id == null || id.isEmpty()){
+                        currentDate = LocalDateTime.now();
 
-                    List<String> colNames = new ArrayList<>();
-                    colNames.add(AUTHOR_NAME_COL_NAME);
-                    colNames.add(DATE_ADDED_COL_NAME);
-                    List<Object> colValues = new ArrayList<>();
-                    colValues.add(authorName);
-                    colValues.add(DATE_TIME_FORMATTER.format(currentDate));
+                        List<String> colNames = new ArrayList<>();
+                        colNames.add(AUTHOR_NAME_COL_NAME);
+                        colNames.add(DATE_ADDED_COL_NAME);
+                        List<Object> colValues = new ArrayList<>();
+                        colValues.add(authorName);
+                        colValues.add(DATE_TIME_FORMATTER.format(currentDate));
 
-                    authorService.addNewAuthor(AUTHOR_TABLE_NAME, 
-                            colNames, colValues);
-                }else{                    
-                    List<String> colNames = new ArrayList<>();
-                    colNames.add(AUTHOR_NAME_COL_NAME);
-                    List<Object> colValues = new ArrayList<>();
-                    colValues.add(authorName);
-                    authorService.updateAuthorById(AUTHOR_TABLE_NAME, colNames, 
-                                colValues, AUTHOR_ID_COL_NAME, id);
+                        authorService.addNewAuthor(AUTHOR_TABLE_NAME, 
+                                colNames, colValues);
+                    }else{                    
+                        List<String> colNames = new ArrayList<>();
+                        colNames.add(AUTHOR_NAME_COL_NAME);
+                        List<Object> colValues = new ArrayList<>();
+                        colValues.add(authorName);
+                        authorService.updateAuthorById(AUTHOR_TABLE_NAME, colNames, 
+                                    colValues, AUTHOR_ID_COL_NAME, id);
+                    }
+                    refreshResults(request, authorService);
+                }else{
+                    if(id != null && !id.isEmpty()){
+                        Author author = authorService.retrieveAuthor(AUTHOR_TABLE_NAME, AUTHOR_ID_COL_NAME, id);
+                        request.setAttribute(INPUT_AUTHOR_ID, author.getAuthorId());
+                        request.setAttribute(INPUT_AUTHOR_NAME, author.getAuthorName());
+                        request.setAttribute(INPUT_DATE_ADDED, author.getDateAdded());
+                    }
+                    destination = ADD_EDIT_AUTHOR_PAGE;
                 }
-                refreshResults(request, authorService);
+                
             }else{
                 request.setAttribute("errMsg", ERROR_INVALID_PARAM);
             }
