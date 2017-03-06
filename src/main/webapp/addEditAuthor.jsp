@@ -47,7 +47,7 @@
                     </c:if>
             </table>
                 <br>
-                <input type="submit" name="submit" value="Submit Changes">
+                <input type="submit" id="submitChanges" name="submit" value="Submit Changes">
                 <button type="submit" formaction="ac?rType=authorList" name="cancel">Cancel</button>
             </form>
         </body>
@@ -56,4 +56,5 @@
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" 
       integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
 <link href="stylesheet.css" rel="stylesheet" type="text/css"/>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
 </html>
