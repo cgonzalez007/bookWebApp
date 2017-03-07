@@ -66,8 +66,17 @@
                             </tr>  
                 </c:forEach>             
             </table>
-            </form>  
-            </form>       
+            </form>      
+            <br>
+            <br>
+            <br>
+            <br>
+            <p>
+                Total number of hits:  <c:out default="0" value="${hitsApp}"/>
+                <br>
+                <br>
+                Total number of hits this session:  <c:out default="0" value="${hitsSession}"/>
+            </p>
             <br>
             <br>
             <a href="ac?rType=home">Go to Home Page</a>

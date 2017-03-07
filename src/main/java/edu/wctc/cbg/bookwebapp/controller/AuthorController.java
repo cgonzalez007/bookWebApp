@@ -14,11 +14,13 @@ import java.util.List;
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.servlet.RequestDispatcher;
+import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import javax.sql.DataSource;
 
 /**
@@ -30,9 +32,9 @@ public class AuthorController extends HttpServlet {
     public static final String ERROR_INVALID_PARAM = "ERROR: Invalid Parameter";
     
     /*pages*/
-    public static final String HOME_PAGE = "/index.jsp";
-    public static final String AUTHOR_LIST_PAGE = "/authorList.jsp";
-    public static final String ADD_EDIT_AUTHOR_PAGE = "/addEditAuthor.jsp";
+    public static final String HOME_PAGE = "index.jsp";
+    public static final String AUTHOR_LIST_PAGE = "authorList.jsp";
+    public static final String ADD_EDIT_AUTHOR_PAGE = "addEditAuthor.jsp";
     
     /*authors list attribute set by this controller class*/
     public static final String AUTHOR_LIST_ATTRIBUTE = "authors";
@@ -52,6 +54,10 @@ public class AuthorController extends HttpServlet {
     /*attribute sent through a query string to indicate which author to edit
         info for*/
     public static final String AUTHOR_ID_TO_EDIT = "id";
+    /*Attribute name shown in Author list page to display number of updates
+    made in list for the session/ throughout app*/
+    public static final String NUMBER_HITS_SESSION = "hitsSession";
+    public static final String NUMBER_HITS_APP = "hitsApp";
     
     /*Html text inputs that display a specified author info*/
     public static final String INPUT_AUTHOR_ID = "authorId";
@@ -80,6 +86,7 @@ public class AuthorController extends HttpServlet {
     private String dbAccessorClassName;
     private String daoClassName;
     private String jndiName;
+    
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
      * methods.
@@ -95,7 +102,24 @@ public class AuthorController extends HttpServlet {
         String requestType = request.getParameter(REQUEST_TYPE);
         String destination = HOME_PAGE;
         try {
-            AuthorService authorService = injectDependenciesAndGetAuthorService();
+            HttpSession session = request.getSession();
+            Object sessHits = session.getAttribute(NUMBER_HITS_SESSION);
+            if(sessHits != null){
+               session.setAttribute(NUMBER_HITS_SESSION, Integer.parseInt(sessHits.toString())+1);
+            }else{
+               session.setAttribute(NUMBER_HITS_SESSION,1);
+            }
+            
+            ServletContext ctx = request.getServletContext();
+            synchronized(ctx) {
+                Object appHits = ctx.getAttribute(NUMBER_HITS_APP);
+                if(appHits != null){
+                   ctx.setAttribute(NUMBER_HITS_APP, Integer.parseInt(appHits.toString())+1);
+                }else{
+                   ctx.setAttribute(NUMBER_HITS_APP,1);
+                }
+            }
+            AuthorService authorService = injectDependenciesAndGetAuthorService();     
             
             if(requestType.equalsIgnoreCase(RTYPE_AUTHOR_LIST)){
                 destination = AUTHOR_LIST_PAGE;
@@ -103,7 +127,9 @@ public class AuthorController extends HttpServlet {
                         AUTHOR_TABLE_NAME, MAX_RECORDS);
                 request.setAttribute(AUTHOR_LIST_ATTRIBUTE, authors);
             }else if(requestType.equalsIgnoreCase(RTYPE_HOME)){
-                destination = destination = HOME_PAGE;
+                /*Instead of dispatching a request object*/
+                 response.sendRedirect(HOME_PAGE);
+                 return;
             }else if(requestType.equalsIgnoreCase(RTYPE_DELETE_AUTHOR)){
                 destination = AUTHOR_LIST_PAGE;
                 String[] authorsToDelete = request.getParameterValues(CHECKBOX_NAME_AUTHOR_ID);

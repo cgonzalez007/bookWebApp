@@ -1,8 +1,9 @@
 $(init);
 function init(){
-
+    var CONFIRM_DELETE_MESSAGE = "Selected authors will be deleted. Proceed?";
+    
     $("#delete").click(function(){
-        if(!confirm("Are you sure you wish to delete the selected author(s)?")){
+        if(!confirm(CONFIRM_DELETE_MESSAGE)){
             return false;
         }
     });
