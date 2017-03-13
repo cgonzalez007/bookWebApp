@@ -9,6 +9,16 @@
     servlet context object; remember, all of these params are
     global to your app and can be accessed from any JSP page or
     servlet. -->
+    <listener>
+        <listener-class>
+            edu.wctc.cbg.bookwebapp.listeners.CustomSessionListener
+        </listener-class>
+    </listener>
+    <listener>
+        <listener-class>
+            edu.wctc.cbg.bookwebapp.listeners.CustomServletContextListener
+        </listener-class>
+    </listener>
     <context-param>
         <param-name>connPoolName</param-name>
         <param-value>jdbc/book</param-value>

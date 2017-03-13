@@ -2,25 +2,29 @@
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <%@taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+ <c:set var="language" value="${pageContext.request.locale}"
+    scope="session" />
+<fmt:setBundle basename="edu.wctc.cbg.bookwebapp.i18n.messages" />
 <!DOCTYPE html>
-<html>
+<html lang="${language}">
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
         <title>
-            Add/Edit Author
+             <fmt:message key="page.addeditauthor.title"/>
         </title>
     </head>
     <div class="container"> 
         <body>
-            <h1>
-                Add/Edit Author
-            </h1>
-            <form id="addEditAuthorForm" name="addEditAuthorForm" method="POST" action="ac?rType=saveAuthor">
+            <jsp:include page="header.jsp"/>
+            <h2>
+                <fmt:message key="page.addeditauthor.title"/>
+            </h2>
+            <form id="addEditAuthorForm" name="addEditAuthorForm" method="POST" action="<%= response.encodeURL("ac?rType=saveAuthor")%>">
                 <table class="table">  
                     <c:if test="${not empty authorId}">
                         <tr>
                             <td>
-                                Author ID     
+                                <fmt:message key="page.addeditauthor.input.author.id"/>
                             </td>
                             <td>
                                 <input type="text" id="authorId" name="authorId" readonly="readonly" value="<c:out value="${authorId}"/>">
@@ -29,7 +33,7 @@
                     </c:if>                     
                     <tr>
                         <td>
-                            Author Name   
+                            <fmt:message key="page.addeditauthor.input.author.name"/>  
                         </td>
                         <td>
                             <input type="text" id="authorName" name="authorName" value="<c:out default="" value="${authorName}"/>">
@@ -38,7 +42,7 @@
                     <c:if test="${not empty dateAdded}">
                         <tr>
                             <td>
-                                Date Added
+                                <fmt:message key="page.addeditauthor.input.date.added"/>  
                             </td>
                             <td>
                                 <input type="text" id="dateAdded" name="dateAdded" readonly="readonly" value="<c:out value="${dateAdded}"/>">
@@ -47,10 +51,14 @@
                     </c:if>
             </table>
                 <br>
-                <input type="submit" id="submitChanges" name="submit" value="Submit Changes">
-                <button type="submit" formaction="ac?rType=authorList" name="cancel">Cancel</button>
+                <input type="submit" id="submitChanges" name="submit" value="<fmt:message key="page.addeditauthor.button.submit.changes"/>">
+                <button type="submit" formaction="<%= response.encodeURL("ac?rType=authorList")%>" name="cancel">
+                    <fmt:message key="page.addeditauthor.button.cancel"/>  </button>
             </form>
         </body>
+        <br>
+        <br>
+        <jsp:include page="footer.jsp"/>
     </div>    
     <!-- Bootstrap: Latest compiled and minified CSS -->
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" 

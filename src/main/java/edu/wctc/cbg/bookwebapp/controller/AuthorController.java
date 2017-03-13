@@ -33,8 +33,8 @@ public class AuthorController extends HttpServlet {
     
     /*pages*/
     public static final String HOME_PAGE = "index.jsp";
-    public static final String AUTHOR_LIST_PAGE = "authorList.jsp";
-    public static final String ADD_EDIT_AUTHOR_PAGE = "addEditAuthor.jsp";
+    public static final String AUTHOR_LIST_PAGE = "/authorList.jsp";
+    public static final String ADD_EDIT_AUTHOR_PAGE = "/addEditAuthor.jsp";
     
     /*authors list attribute set by this controller class*/
     public static final String AUTHOR_LIST_ATTRIBUTE = "authors";
@@ -64,6 +64,13 @@ public class AuthorController extends HttpServlet {
     public static final String INPUT_AUTHOR_NAME = "authorName";
     public static final String INPUT_DATE_ADDED = "dateAdded";
     
+    /**
+     * Used to Detect valid submits (Mainly to prevent form submission that 
+     * adds a new author)
+     */
+    public static final String VALID_SUBMIT = "validAddAuthor";
+    public static final String TRUE = "true";
+    public static final String FALSE = "false";
     /**
      * Db info
      */
@@ -105,9 +112,9 @@ public class AuthorController extends HttpServlet {
             HttpSession session = request.getSession();
             Object sessHits = session.getAttribute(NUMBER_HITS_SESSION);
             if(sessHits != null){
-               session.setAttribute(NUMBER_HITS_SESSION, Integer.parseInt(sessHits.toString())+1);
+                session.setAttribute(NUMBER_HITS_SESSION, Integer.parseInt(sessHits.toString())+1);
             }else{
-               session.setAttribute(NUMBER_HITS_SESSION,1);
+                session.setAttribute(NUMBER_HITS_SESSION,1);
             }
             
             ServletContext ctx = request.getServletContext();
@@ -119,7 +126,8 @@ public class AuthorController extends HttpServlet {
                    ctx.setAttribute(NUMBER_HITS_APP,1);
                 }
             }
-            AuthorService authorService = injectDependenciesAndGetAuthorService();     
+            
+            AuthorService authorService = injectDependenciesAndGetAuthorService();
             
             if(requestType.equalsIgnoreCase(RTYPE_AUTHOR_LIST)){
                 destination = AUTHOR_LIST_PAGE;
@@ -128,7 +136,7 @@ public class AuthorController extends HttpServlet {
                 request.setAttribute(AUTHOR_LIST_ATTRIBUTE, authors);
             }else if(requestType.equalsIgnoreCase(RTYPE_HOME)){
                 /*Instead of dispatching a request object*/
-                 response.sendRedirect(HOME_PAGE);
+                 response.sendRedirect(response.encodeRedirectURL(HOME_PAGE));
                  return;
             }else if(requestType.equalsIgnoreCase(RTYPE_DELETE_AUTHOR)){
                 destination = AUTHOR_LIST_PAGE;
@@ -141,6 +149,7 @@ public class AuthorController extends HttpServlet {
                 refreshResults(request, authorService);
             }else if(requestType.equalsIgnoreCase(RTYPE_ADD_AUTHOR)){
                 destination = ADD_EDIT_AUTHOR_PAGE;
+                request.setAttribute(VALID_SUBMIT, TRUE);
             }else if(requestType.equalsIgnoreCase(RTYPE_EDIT_AUTHOR)){
                 destination = ADD_EDIT_AUTHOR_PAGE;
                 /*If we are editing customer information, we must retrieve the id of the 
@@ -151,13 +160,13 @@ public class AuthorController extends HttpServlet {
                 request.setAttribute(INPUT_AUTHOR_NAME, author.getAuthorName());
                 request.setAttribute(INPUT_DATE_ADDED, author.getDateAdded());
             }else if(requestType.equalsIgnoreCase(RTYPE_SAVE_AUTHOR)){
-
+                destination = AUTHOR_LIST_PAGE; 
                 String authorName = request.getParameter(INPUT_AUTHOR_NAME);
                 String id = request.getParameter(INPUT_AUTHOR_ID);
+                
                 /*Test to check to see if authorName is null or empty. If it is, then the controller
                 will simply redirect the user to the same page (addEditAuthor)*/
                 if(authorName != null && !authorName.isEmpty()){
-                    destination = AUTHOR_LIST_PAGE;
                     /*If id is null/empty, that means we are not referencing an author 
                     already in the database, so we take the name entered, and current
                     date to add a new author in the database. Otherwise if id does 
@@ -175,6 +184,7 @@ public class AuthorController extends HttpServlet {
 
                         authorService.addNewAuthor(AUTHOR_TABLE_NAME, 
                                 colNames, colValues);
+                        
                     }else{                    
                         List<String> colNames = new ArrayList<>();
                         colNames.add(AUTHOR_NAME_COL_NAME);
@@ -193,7 +203,6 @@ public class AuthorController extends HttpServlet {
                     }
                     destination = ADD_EDIT_AUTHOR_PAGE;
                 }
-                
             }else{
                 request.setAttribute("errMsg", ERROR_INVALID_PARAM);
             }
@@ -201,9 +210,10 @@ public class AuthorController extends HttpServlet {
             destination = HOME_PAGE;
             request.setAttribute("errMsg", e.getCause().getMessage());
         }
-        RequestDispatcher view =
-                request.getRequestDispatcher(destination);
-        view.forward(request, response);
+
+        RequestDispatcher dispatcher = getServletContext().
+                getRequestDispatcher(response.encodeURL(destination));
+        dispatcher.forward(request, response);
     }
     
      /*

@@ -2,23 +2,28 @@
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <%@taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+ <c:set var="language" value="${pageContext.request.locale}"
+    scope="session" />
+<fmt:setBundle basename="edu.wctc.cbg.bookwebapp.i18n.messages" />
 <!DOCTYPE html>
-<html>
+<html lang="${language}">
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
         <title>
-            Author List
+            <fmt:message key="page.authorlist.title"/>
         </title>
     </head>
     <div class="container"> 
         <body>
-            <h1>
-                Author List
-            </h1>
+            <jsp:include page="header.jsp"/>
+            <h2>
+                <fmt:message key="page.home.subheader.admin.tasks"/>
+            </h2>
             <br>
-            <form id="authorFormDelete" name="authorFormDelete" method="POST" action="ac?rType=deleteAuthor">  
-                <button type="submit" formaction="ac?rType=addAuthor" name="add">Add</button>
-                <input type="submit" id="delete" name="delete" value="Delete">
+            <form id="authorFormDelete" name="authorFormDelete" method="POST" action="<%= response.encodeURL("ac?rType=deleteAuthor")%>">  
+                <button type="submit" formaction="<%= response.encodeURL("ac?rType=addAuthor")%>" name="add">
+                    <fmt:message key="page.authorlist.button.add"/></button>
+                <input type="submit" id="delete" name="delete" value="<fmt:message key="page.authorlist.button.delete"/>">
             <br>            
             <br>
             <table class="table">
@@ -27,13 +32,13 @@
                        
                     </th>
                     <th>
-                        ID
+                        <fmt:message key="page.authorlist.table.id"/>
                     </th>
                     <th>
-                        Name
+                        <fmt:message key="page.authorlist.table.name"/>
                     </th>
                     <th>
-                        Date Added
+                        <fmt:message key="page.authorlist.table.date.added"/>
                     </th>
                     <th>
                        
@@ -61,31 +66,20 @@
                                     <fmt:formatDate pattern="M/d/yyyy" value="${a.dateAdded}"/>                                 
                                 </td>
                                 <td>
-                                    <button type="submit" formaction="ac?rType=editAuthor&id=${a.authorId}" value="${a.authorId}" name="edit">Edit</button>
+                                    <button type="submit" formaction="<c:url value="ac?rType=editAuthor&id=${a.authorId}"/>" value="${a.authorId}" name="edit">
+                                        <fmt:message key="page.authorlist.button.edit"/></button>
                                 </td>
                             </tr>  
                 </c:forEach>             
             </table>
             </form>      
+            <br>    
             <br>
-            <br>
-            <br>
-            <br>
-            <p>
-                Total number of hits:  <c:out default="0" value="${hitsApp}"/>
-                <br>
-                <br>
-                Total number of hits this session:  <c:out default="0" value="${hitsSession}"/>
-            </p>
-            <br>
-            <br>
-            <a href="ac?rType=home">Go to Home Page</a>
+            <a href="<%= response.encodeURL("ac?rType=home")%>"><fmt:message key="page.authorlist.link.go.to.home.page"/></a>
         </body>
         <br>
         <br>
-        <footer>
-            Chris Gonzalez 2017
-        </footer>
+        <jsp:include page="footer.jsp"/>
     </div>
     <!-- Bootstrap: Latest compiled and minified CSS -->
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" 
