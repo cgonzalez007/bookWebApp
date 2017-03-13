@@ -65,13 +65,6 @@ public class AuthorController extends HttpServlet {
     public static final String INPUT_DATE_ADDED = "dateAdded";
     
     /**
-     * Used to Detect valid submits (Mainly to prevent form submission that 
-     * adds a new author)
-     */
-    public static final String VALID_SUBMIT = "validAddAuthor";
-    public static final String TRUE = "true";
-    public static final String FALSE = "false";
-    /**
      * Db info
      */
     public static final String AUTHOR_TABLE_NAME = "author";
@@ -149,7 +142,6 @@ public class AuthorController extends HttpServlet {
                 refreshResults(request, authorService);
             }else if(requestType.equalsIgnoreCase(RTYPE_ADD_AUTHOR)){
                 destination = ADD_EDIT_AUTHOR_PAGE;
-                request.setAttribute(VALID_SUBMIT, TRUE);
             }else if(requestType.equalsIgnoreCase(RTYPE_EDIT_AUTHOR)){
                 destination = ADD_EDIT_AUTHOR_PAGE;
                 /*If we are editing customer information, we must retrieve the id of the 

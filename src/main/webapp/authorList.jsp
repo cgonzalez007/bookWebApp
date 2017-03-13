@@ -17,7 +17,7 @@
         <body>
             <jsp:include page="header.jsp"/>
             <h2>
-                <fmt:message key="page.home.subheader.admin.tasks"/>
+                <fmt:message key="page.authorlist.subheader.author.list"/>
             </h2>
             <br>
             <form id="authorFormDelete" name="authorFormDelete" method="POST" action="<%= response.encodeURL("ac?rType=deleteAuthor")%>">  
