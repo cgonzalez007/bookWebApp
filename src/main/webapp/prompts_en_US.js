@@ -1,4 +1,4 @@
-/*Default prompts (English)*/
+/*U.S. English prompts*/
 $(init);
 function init(){
     var CONFIRM_DELETE_MESSAGE = "Selected authors will be deleted. Proceed?";

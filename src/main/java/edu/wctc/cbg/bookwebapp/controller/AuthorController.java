@@ -65,6 +65,12 @@ public class AuthorController extends HttpServlet {
     public static final String INPUT_DATE_ADDED = "dateAdded";
     
     /**
+     * To be used to redirect users to Author list page. Prevents resubmission
+     * after refresh
+     */
+    public static final String AUTHOR_LIST_REQUEST = "ac?rType=authorList";
+    
+    /**
      * Db info
      */
     public static final String AUTHOR_TABLE_NAME = "author";
@@ -186,6 +192,8 @@ public class AuthorController extends HttpServlet {
                                     colValues, AUTHOR_ID_COL_NAME, id);
                     }
                     refreshResults(request, authorService);
+                    response.sendRedirect(response.encodeURL(AUTHOR_LIST_REQUEST));
+                    return;
                 }else{
                     if(id != null && !id.isEmpty()){
                         Author author = authorService.retrieveAuthor(AUTHOR_TABLE_NAME, AUTHOR_ID_COL_NAME, id);

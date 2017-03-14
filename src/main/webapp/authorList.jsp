@@ -72,7 +72,7 @@
                             </tr>  
                 </c:forEach>             
             </table>
-            </form>      
+            </form>   
             <br>    
             <br>
             <a href="<%= response.encodeURL("ac?rType=home")%>"><fmt:message key="page.authorlist.link.go.to.home.page"/></a>
@@ -86,5 +86,6 @@
       integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
 <link href="stylesheet.css" rel="stylesheet" type="text/css"/>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
-<script src="prompts.js"></script>
+<script src="jquery-ui.min.js" type="text/javascript"></script>
+<script src="<fmt:message key="page.js.prompts.filename"/>"></script>
 </html>
