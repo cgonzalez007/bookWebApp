@@ -25,7 +25,7 @@
     </context-param>
     <context-param>
         <param-name>authorDao</param-name>
-        <param-value>edu.wctc.cbg.bookwebapp.model.AuthorDao</param-value>
+        <param-value>edu.wctc.cbg.bookwebapp.model.ConnPoolAuthorDao</param-value>
     </context-param>
     <context-param>
         <param-name>dbStrategy</param-name>
