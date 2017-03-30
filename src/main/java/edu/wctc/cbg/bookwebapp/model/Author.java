@@ -1,132 +1,107 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
 package edu.wctc.cbg.bookwebapp.model;
 
+import java.io.Serializable;
 import java.util.Date;
-import java.util.Objects;
+import javax.persistence.Basic;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
+import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
+import javax.validation.constraints.Size;
+import javax.xml.bind.annotation.XmlRootElement;
 
 /**
- * 
- * @author Chris Gonzalez 2017
+ *
+ * @author cgonz
  */
-public class Author {
-    private final String NULL_MSG = " cannot be null";
-    
+@Entity
+@Table(name = "author")
+@XmlRootElement
+@NamedQueries({
+    @NamedQuery(name = "Author.findAll", query = "SELECT a FROM Author a")
+    , @NamedQuery(name = "Author.findByAuthorId", query = "SELECT a FROM Author a WHERE a.authorId = :authorId")
+    , @NamedQuery(name = "Author.findByAuthorName", query = "SELECT a FROM Author a WHERE a.authorName = :authorName")
+    , @NamedQuery(name = "Author.findByDateAdded", query = "SELECT a FROM Author a WHERE a.dateAdded = :dateAdded")})
+public class Author implements Serializable {
+
+    private static final long serialVersionUID = 1L;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Basic(optional = false)
+    @Column(name = "author_id")
     private Integer authorId;
+    @Size(max = 80)
+    @Column(name = "author_name")
     private String authorName;
+    @Column(name = "date_added")
+    @Temporal(TemporalType.DATE)
     private Date dateAdded;
-    /**
-     * 
-     */
+
     public Author() {
     }
-    /**
-     * 
-     * @param authorId 
-     */
+
     public Author(Integer authorId) {
         this.authorId = authorId;
     }
-    /**
-     * 
-     * @param authorId
-     * @param authorName
-     * @param dateAdded 
-     */
-    public Author(Integer authorId, String authorName, Date dateAdded) {
-        this.authorId = authorId;
-        this.authorName = authorName;
-        this.dateAdded = dateAdded;
-    }
-    /**
-     * 
-     * @return 
-     */
-    public final Integer getAuthorId() {
+
+    public Integer getAuthorId() {
         return authorId;
     }
-    /**
-     * 
-     * @param authorId
-     * @throws IllegalArgumentException 
-     */
-    public final void setAuthorId(Integer authorId) throws IllegalArgumentException {
-        if(authorId == null) {
-            throw new IllegalArgumentException("author id" + NULL_MSG);
-        }
+
+    public void setAuthorId(Integer authorId) {
         this.authorId = authorId;
     }
-    /**
-     * 
-     * @return 
-     */
-    public final String getAuthorName() {
+
+    public String getAuthorName() {
         return authorName;
     }
-    /**
-     * 
-     * @param authorName
-     * @throws IllegalArgumentException 
-     */
-    public final void setAuthorName(String authorName) throws IllegalArgumentException {
-        if(authorName == null || authorName.isEmpty()) {
-            throw new IllegalArgumentException("author name is required");
-        }
+
+    public void setAuthorName(String authorName) {
         this.authorName = authorName;
     }
-    /**
-     * 
-     * @return 
-     */
-    public final Date getDateAdded() {
+
+    public Date getDateAdded() {
         return dateAdded;
     }
-    /**
-     * 
-     * @param dateAdded
-     * @throws IllegalArgumentException 
-     */
-    public final void setDateAdded(Date dateAdded) throws IllegalArgumentException {
-        if(dateAdded == null) {
-            throw new IllegalArgumentException("date addedl" + NULL_MSG);
-        }
-         this.dateAdded = dateAdded;
+
+    public void setDateAdded(Date dateAdded) {
+        this.dateAdded = dateAdded;
     }
-    /**
-     * 
-     * @return 
-     */
+
     @Override
-    public final int hashCode() {
-        int hash = 7;
-        hash = 59 * hash + Objects.hashCode(this.authorId);
+    public int hashCode() {
+        int hash = 0;
+        hash += (authorId != null ? authorId.hashCode() : 0);
         return hash;
     }
-    /**
-     * 
-     * @param obj
-     * @return 
-     */
+
     @Override
-    public final boolean equals(Object obj) {
-        if (obj == null) {
+    public boolean equals(Object object) {
+        // TODO: Warning - this method won't work in the case the id fields are not set
+        if (!(object instanceof Author)) {
             return false;
         }
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
-        final Author other = (Author) obj;
-        if (!Objects.equals(this.authorId, other.authorId)) {
+        Author other = (Author) object;
+        if ((this.authorId == null && other.authorId != null) || (this.authorId != null && !this.authorId.equals(other.authorId))) {
             return false;
         }
         return true;
     }
-    /**
-     * 
-     * @return 
-     */
+
     @Override
-    public final String toString() {
-        return "Author{" + "authorId=" + authorId + ", authorName=" + authorName + ", dateAdded=" + dateAdded + '}';
+    public String toString() {
+        return "edu.wctc.cbg.bookwebapp.model.Author[ authorId=" + authorId + " ]";
     }
-    
     
 }

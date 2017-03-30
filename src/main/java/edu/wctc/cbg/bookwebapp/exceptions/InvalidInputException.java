@@ -1,4 +1,4 @@
-package edu.wctc.cbg.bookwebapp.model;
+package edu.wctc.cbg.bookwebapp.exceptions;
 
 /**
  *

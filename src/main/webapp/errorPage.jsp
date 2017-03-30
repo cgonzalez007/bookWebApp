@@ -9,28 +9,18 @@
 <html lang="${language}">
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-        <title>
-             <fmt:message key="page.home.title"/>
-        </title>
+        <title>Error:</title>
     </head>
     <div class="container">
         <body>
-            <jsp:include page="header.jsp"/>
-            <h2>
-                 <fmt:message key="page.home.subheader.admin.tasks"/>
-            </h2>
-            <ul>
-                <li>
-                    <a href="<%= response.encodeURL("ac?rType=authorList")%>"><fmt:message key="page.home.link.go.to.author.list"/></a>
-                </li>
-            </ul>
+            <h1>
+                Error:
+            </h1>
+            <p>
+                ${errorMsg}
+            </p>
+             <a href="<%= response.encodeURL("ac?rType=home")%>"><fmt:message key="page.authorlist.link.go.to.home.page"/></a>
         </body>
-        <br>
-        <br>
-        <footer>
-                Chris Gonzalez 2017
-        </footer>
-        <b
     </div>
     <!-- Bootstrap: Latest compiled and minified CSS -->
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" 

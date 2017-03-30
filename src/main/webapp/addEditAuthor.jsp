@@ -45,7 +45,7 @@
                                 <fmt:message key="page.addeditauthor.input.date.added"/>  
                             </td>
                             <td>
-                                <input type="text" id="dateAdded" name="dateAdded" readonly="readonly" value="<c:out value="${dateAdded}"/>">
+                                <input type="text" id="dateAdded" name="dateAdded" readonly="readonly" value="<fmt:formatDate pattern="M/d/yyyy" value="${dateAdded}"/>">
                             </td>
                         </tr>  
                     </c:if>
