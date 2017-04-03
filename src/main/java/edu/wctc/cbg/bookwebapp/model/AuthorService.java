@@ -21,20 +21,13 @@ public class AuthorService {
     }
     /**
      * 
-     * @param authorTableName
-     * @param maxRecords
      * @return
      * @throws ClassNotFoundException
      * @throws SQLException 
      */
-    public final List<Author> retrieveAuthors(String authorTableName, int maxRecords) 
-            throws ClassNotFoundException, SQLException, 
-            IllegalArgumentException{
-        if (authorTableName == null || authorTableName.isEmpty() || maxRecords < 
-                MIN_MAX_RECORDS_PARAMETER) {
-            throw new InvalidInputException();
-        }
-        return authorDao.getAuthorList(authorTableName,maxRecords);
+    public final List<Author> retrieveAuthors()throws ClassNotFoundException, 
+            SQLException {
+        return authorDao.getAuthorList();
     }
     /**
      * 
@@ -45,15 +38,12 @@ public class AuthorService {
      * @throws ClassNotFoundException
      * @throws SQLException 
      */
-    public final Author retrieveAuthor(String authorTableName, String
-            authorIdColName, String authorId) throws ClassNotFoundException, 
+    public final Author retrieveAuthor(String authorId) throws ClassNotFoundException, 
             SQLException,IllegalArgumentException{
-        if (authorTableName == null || authorIdColName == null || 
-                authorId == null || authorTableName.isEmpty() ||
-                authorIdColName.isEmpty() || authorId.isEmpty()) {
+        if (authorId == null || authorId.isEmpty()) {
             throw new InvalidInputException();
         }
-        return authorDao.retrieveAuthor(authorTableName, authorIdColName, authorId);
+        return authorDao.retrieveAuthor(authorId);
     }
     /**
      * 
@@ -64,60 +54,44 @@ public class AuthorService {
      * @throws ClassNotFoundException
      * @throws SQLException 
      */
-    public final int deleteAuthorById(String authorTableName, String authorIdColName,
-            String authorId) throws ClassNotFoundException, SQLException,
+    public final int deleteAuthorById(String authorId) throws 
+            ClassNotFoundException, SQLException,
             IllegalArgumentException{
-        if (authorTableName == null || authorIdColName == null || 
-                authorId == null || authorTableName.isEmpty() ||
-                authorIdColName.isEmpty() || authorId.isEmpty()) {
+        if (authorId == null || authorId.isEmpty()) {
             throw new InvalidInputException();
         }
-        return authorDao.deleteAuthorById(authorTableName, authorIdColName, authorId);
+        return authorDao.deleteAuthorById(authorId);
     }
     /**
      * 
-     * @param authorTableName
-     * @param colNames
-     * @param colValues
-     * @param authorIdColName
      * @param authorId
+     * @param authorName
      * @return
      * @throws ClassNotFoundException
      * @throws SQLException 
      */
-    public final int updateAuthorById(String authorTableName, List<String> colNames, 
-            List<Object> colValues, String authorIdColName, Object authorId) 
+    public final int updateAuthorById(String authorName, String authorId) 
             throws ClassNotFoundException, SQLException, 
             IllegalArgumentException{
-        if (authorTableName == null || authorIdColName == null || 
-                colNames == null || colValues == null ||
-                authorId == null || authorTableName.isEmpty() ||
-                authorIdColName.isEmpty() || colNames.isEmpty() || 
-                colValues.isEmpty()) {
+        if (authorName == null || authorId == null || authorName.isEmpty() || 
+                authorId.isEmpty()) {
             throw new InvalidInputException();
         }
-        return authorDao.updateAuthorById(authorTableName, colNames, colValues, 
-                authorIdColName, authorId);
+        return authorDao.updateAuthorById(authorName, authorId);
     }
     /**
      * 
-     * @param authorTableName
-     * @param authorTableColNames
-     * @param authorTableColValues
+     * @param authorName
      * @return
      * @throws ClassNotFoundException
      * @throws SQLException 
      */
-    public final int addNewAuthor(String authorTableName, List<String> authorTableColNames,
-            List<Object> authorTableColValues) throws ClassNotFoundException, 
+    public final int addNewAuthor(String authorName) throws ClassNotFoundException, 
             SQLException, IllegalArgumentException {
-        if (authorTableName == null || authorTableColNames == null || 
-                authorTableColValues == null || authorTableName.isEmpty() ||
-                authorTableColNames.isEmpty() || authorTableColValues.isEmpty()) {
+        if (authorName == null || authorName.isEmpty()) {
             throw new InvalidInputException();
         }
-        return authorDao.addNewAuthor(authorTableName, authorTableColNames, 
-                authorTableColValues);
+        return authorDao.addNewAuthor(authorName);
     }
     /**
      * 

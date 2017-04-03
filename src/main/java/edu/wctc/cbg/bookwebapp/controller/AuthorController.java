@@ -7,9 +7,6 @@ import edu.wctc.cbg.bookwebapp.model.IAuthorDao;
 import java.io.IOException;
 import java.lang.reflect.Constructor;
 import java.sql.SQLException;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
 import java.util.List;
 import javax.naming.Context;
 import javax.naming.InitialContext;
@@ -35,6 +32,11 @@ public class AuthorController extends HttpServlet {
     public static final String HOME_PAGE = "index.jsp";
     public static final String AUTHOR_LIST_PAGE = "/authorList.jsp";
     public static final String ADD_EDIT_AUTHOR_PAGE = "/addEditAuthor.jsp";
+    /**
+     * To be used to redirect users to Author list page. Prevents resubmission
+     * after refresh
+     */
+    public static final String AUTHOR_LIST_REQUEST = "ac?rType=authorList";
     
     /*authors list attribute set by this controller class*/
     public static final String AUTHOR_LIST_ATTRIBUTE = "authors";
@@ -63,27 +65,7 @@ public class AuthorController extends HttpServlet {
     public static final String INPUT_AUTHOR_ID = "authorId";
     public static final String INPUT_AUTHOR_NAME = "authorName";
     public static final String INPUT_DATE_ADDED = "dateAdded";
-    
-    /**
-     * To be used to redirect users to Author list page. Prevents resubmission
-     * after refresh
-     */
-    public static final String AUTHOR_LIST_REQUEST = "ac?rType=authorList";
-    
-    /**
-     * Db info
-     */
-    public static final String AUTHOR_TABLE_NAME = "author";
-    public static final String AUTHOR_ID_COL_NAME = "author_id";
-    public static final String AUTHOR_NAME_COL_NAME = "author_name";
-    public static final String DATE_ADDED_COL_NAME = "date_added";
-    public static final int MAX_RECORDS = 50;
-    
-    /*used for setting current datetime when adding new author to db*/
-    private LocalDateTime currentDate;
-    private static final DateTimeFormatter DATE_TIME_FORMATTER = 
-            DateTimeFormatter.ofPattern("yyyy-MM-dd");
-    
+
     //Get init parameters from web.xml
     private String driverClass;
     private String url;
@@ -130,8 +112,7 @@ public class AuthorController extends HttpServlet {
             
             if(requestType.equalsIgnoreCase(RTYPE_AUTHOR_LIST)){
                 destination = AUTHOR_LIST_PAGE;
-                List<Author> authors = authorService.retrieveAuthors(
-                        AUTHOR_TABLE_NAME, MAX_RECORDS);
+                List<Author> authors = authorService.retrieveAuthors();
                 request.setAttribute(AUTHOR_LIST_ATTRIBUTE, authors);
             }else if(requestType.equalsIgnoreCase(RTYPE_HOME)){
                 /*Instead of dispatching a request object*/
@@ -142,7 +123,7 @@ public class AuthorController extends HttpServlet {
                 String[] authorsToDelete = request.getParameterValues(CHECKBOX_NAME_AUTHOR_ID);
                 if(authorsToDelete != null){
                     for(String id : authorsToDelete){
-                        authorService.deleteAuthorById(AUTHOR_TABLE_NAME, AUTHOR_ID_COL_NAME, id);
+                        authorService.deleteAuthorById(id);
                     }
                 }
                 refreshResults(request, authorService);
@@ -153,7 +134,7 @@ public class AuthorController extends HttpServlet {
                 /*If we are editing customer information, we must retrieve the id of the 
                 author selected, based on an attribute created by a query string*/
                 String id  = request.getParameter(AUTHOR_ID_TO_EDIT);
-                Author author = authorService.retrieveAuthor(AUTHOR_TABLE_NAME, AUTHOR_ID_COL_NAME, id);
+                Author author = authorService.retrieveAuthor(id);
                 request.setAttribute(INPUT_AUTHOR_ID, author.getAuthorId());
                 request.setAttribute(INPUT_AUTHOR_NAME, author.getAuthorName());
                 request.setAttribute(INPUT_DATE_ADDED, author.getDateAdded());
@@ -171,32 +152,18 @@ public class AuthorController extends HttpServlet {
                     contain a value, that means we are simply editing author information
                     so the name simply gets updated in the database.*/
                     if(id == null || id.isEmpty()){
-                        currentDate = LocalDateTime.now();
-
-                        List<String> colNames = new ArrayList<>();
-                        colNames.add(AUTHOR_NAME_COL_NAME);
-                        colNames.add(DATE_ADDED_COL_NAME);
-                        List<Object> colValues = new ArrayList<>();
-                        colValues.add(authorName);
-                        colValues.add(DATE_TIME_FORMATTER.format(currentDate));
-
-                        authorService.addNewAuthor(AUTHOR_TABLE_NAME, 
-                                colNames, colValues);
+                        
+                        authorService.addNewAuthor(authorName);
                         
                     }else{                    
-                        List<String> colNames = new ArrayList<>();
-                        colNames.add(AUTHOR_NAME_COL_NAME);
-                        List<Object> colValues = new ArrayList<>();
-                        colValues.add(authorName);
-                        authorService.updateAuthorById(AUTHOR_TABLE_NAME, colNames, 
-                                    colValues, AUTHOR_ID_COL_NAME, id);
+                        authorService.updateAuthorById(authorName, id);
                     }
                     refreshResults(request, authorService);
                     response.sendRedirect(response.encodeURL(AUTHOR_LIST_REQUEST));
                     return;
                 }else{
                     if(id != null && !id.isEmpty()){
-                        Author author = authorService.retrieveAuthor(AUTHOR_TABLE_NAME, AUTHOR_ID_COL_NAME, id);
+                        Author author = authorService.retrieveAuthor(id);
                         request.setAttribute(INPUT_AUTHOR_ID, author.getAuthorId());
                         request.setAttribute(INPUT_AUTHOR_NAME, author.getAuthorName());
                         request.setAttribute(INPUT_DATE_ADDED, author.getDateAdded());
@@ -288,8 +255,7 @@ public class AuthorController extends HttpServlet {
     
     private void refreshResults(HttpServletRequest request, AuthorService authorService) 
             throws ClassNotFoundException, SQLException{
-        List<Author> authors = authorService.retrieveAuthors(
-                        AUTHOR_TABLE_NAME, MAX_RECORDS);
+        List<Author> authors = authorService.retrieveAuthors();
         request.setAttribute(AUTHOR_LIST_ATTRIBUTE, authors);
     }
 

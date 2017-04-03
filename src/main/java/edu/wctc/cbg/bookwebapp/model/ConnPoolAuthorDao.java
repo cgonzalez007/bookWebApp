@@ -1,6 +1,8 @@
 package edu.wctc.cbg.bookwebapp.model;
 
 import java.sql.SQLException;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -22,11 +24,19 @@ public class ConnPoolAuthorDao implements IAuthorDao {
     private DataSource ds;
     private DbAccessor db;
     
-    private static final String AUTHOR_ID_COL_NAME = "author_id";
-    private static final String AUTHOR_NAME_COL_NAME = "author_name";
-    private static final String DATE_ADDED_COL_NAME = "date_added";
+    /**
+     * Db info
+     */
+    public static final String AUTHOR_TABLE_NAME = "author";
+    public static final String AUTHOR_ID_COL_NAME = "author_id";
+    public static final String AUTHOR_NAME_COL_NAME = "author_name";
+    public static final String DATE_ADDED_COL_NAME = "date_added";
+    public static final int MAX_RECORDS = 100;
     
-    private static final int MIN_MAX_RECORDS_PARAMETER = 1;
+    /*used for setting current datetime when adding new author to db*/
+    private LocalDateTime currentDate;
+    private static final DateTimeFormatter DATE_TIME_FORMATTER = 
+            DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
     /**
      * 
@@ -39,48 +49,41 @@ public class ConnPoolAuthorDao implements IAuthorDao {
     }
     /**
      * 
-     * @param authorTableName
-     * @param authorIdColName
      * @param authorId
      * @return
      * @throws ClassNotFoundException
      * @throws SQLException 
      */
     @Override
-    public final int deleteAuthorById(String authorTableName, String authorIdColName, 
-            Object authorId) throws ClassNotFoundException, SQLException, 
-            IllegalArgumentException{
-        if(authorTableName == null || authorIdColName == null || authorId == null ||
-                authorTableName.isEmpty() || authorIdColName.isEmpty()){
+    public final int deleteAuthorById(String authorId) throws 
+            ClassNotFoundException, SQLException, IllegalArgumentException{
+        if(authorId == null){
             throw new InvalidInputException();
         }
         db.openConnection(ds);
-        int recsDeleted = db.deleteById(authorTableName, authorIdColName, authorId);
+        int recsDeleted = db.deleteById(AUTHOR_TABLE_NAME, AUTHOR_ID_COL_NAME, authorId);
         db.closeConnection();
         return recsDeleted;
     }
     /**
      * 
-     * @param authorTableName
-     * @param authorIdColName
      * @param authorId
      * @return
      * @throws ClassNotFoundException
      * @throws SQLException 
      */
     @Override
-    public final Author retrieveAuthor(String authorTableName, String 
-            authorIdColName, String authorId)throws ClassNotFoundException, 
+    public final Author retrieveAuthor(String authorId)throws ClassNotFoundException, 
             SQLException, IllegalArgumentException {
-        if(authorTableName == null || authorIdColName == null || authorId == null ||
-                authorTableName.isEmpty() || authorIdColName.isEmpty() ||
-                authorId.isEmpty()){
+        if(authorId == null || authorId.isEmpty()){
             throw new InvalidInputException();
         }
         db.openConnection(ds);
         
         Map<String,Object> rawRec = db.getSingleRecord(
-                authorTableName, authorIdColName, authorId);
+                AUTHOR_TABLE_NAME, AUTHOR_ID_COL_NAME, authorId);
+        
+        db.closeConnection();
         
         Author author = new Author();
         
@@ -95,31 +98,24 @@ public class ConnPoolAuthorDao implements IAuthorDao {
         Object objDateAdded = rawRec.get(DATE_ADDED_COL_NAME);
         Date dateAdded = (objDateAdded != null) ? (Date)objDateAdded : null;
         author.setDateAdded(dateAdded);
-        
-        db.closeConnection();
-        
+
         return author;
     }
     /**
      * 
-     * @param authorTableName
-     * @param maxRecords
      * @return
      * @throws ClassNotFoundException
      * @throws SQLException 
      */
     @Override
-    public final List<Author> getAuthorList(String authorTableName, int maxRecords) 
-            throws ClassNotFoundException, SQLException,IllegalArgumentException{
-        if(authorTableName == null || authorTableName.isEmpty() || maxRecords <
-                MIN_MAX_RECORDS_PARAMETER){
-            throw new InvalidInputException();
-        }
+    public final List<Author> getAuthorList() throws ClassNotFoundException, 
+            SQLException {
         db.openConnection(ds);
         
         List<Author> records = new ArrayList<>();      
-        List<Map<String, Object>> rawData = db.getAllRecords(authorTableName, 
-                maxRecords);
+        List<Map<String, Object>> rawData = db.getAllRecords(AUTHOR_TABLE_NAME, 
+                MAX_RECORDS);
+        db.closeConnection();
         
         for(Map<String,Object> rawRec : rawData){
             Author author = new Author();
@@ -137,62 +133,61 @@ public class ConnPoolAuthorDao implements IAuthorDao {
             author.setDateAdded(dateAdded);
             
             records.add(author);
-        }
-        db.closeConnection();
+        }  
         
         return records;
     }
     /**
      * 
-     * @param authorTableName
-     * @param colNames
-     * @param colValues
-     * @param authorIdColName
      * @param authorId
+     * @param authorName
      * @return
      * @throws SQLException
      * @throws ClassNotFoundException 
      */
     @Override
-    public final int updateAuthorById(String authorTableName, List<String> 
-            colNames, List<Object> colValues, String authorIdColName, Object 
-            authorId) throws SQLException, ClassNotFoundException,
-            IllegalArgumentException{
-        if(authorTableName == null || colNames == null || colValues == null ||
-                authorIdColName ==null || authorId == null || 
-                authorTableName.isEmpty() || colNames.isEmpty() || 
-                colValues.isEmpty() || authorIdColName.isEmpty()){
+    public final int updateAuthorById(String authorName, String authorId) 
+            throws SQLException, ClassNotFoundException, IllegalArgumentException{
+        if(authorName == null || authorId == null || authorName.isEmpty() || 
+                authorId.isEmpty()){
             throw new InvalidInputException();
         }
         int authorRecordsUpdated = 0;
-       db.openConnection(ds);
-        authorRecordsUpdated = db.updateById(authorTableName, colNames, 
-                colValues, authorIdColName, authorId);
+        List<String> colNames = new ArrayList<>();
+                       colNames.add(AUTHOR_NAME_COL_NAME);
+                       List<Object> colValues = new ArrayList<>();
+                       colValues.add(authorName);
+        db.openConnection(ds);
+        authorRecordsUpdated = db.updateById(AUTHOR_TABLE_NAME, colNames, 
+                colValues, AUTHOR_ID_COL_NAME, authorId);
         db.closeConnection();
         return authorRecordsUpdated;
     }
     /**
      * 
-     * @param authorTableName
-     * @param authorTableColNames
-     * @param authorTableColValues
+     * @param authorName
      * @return
      * @throws ClassNotFoundException
      * @throws SQLException 
      */
     @Override
-    public final int addNewAuthor(String authorTableName, List<String> 
-            authorTableColNames, List<Object> authorTableColValues) throws 
+    public final int addNewAuthor(String authorName) throws 
             ClassNotFoundException, SQLException, IllegalArgumentException{
-        if(authorTableName == null || authorTableColNames == null || 
-                authorTableColValues == null || authorTableName.isEmpty() || 
-                authorTableColNames.isEmpty()|| authorTableColValues.isEmpty()){
+        if(authorName == null || authorName.isEmpty()){
             throw new InvalidInputException();
         }
+        currentDate = LocalDateTime.now();
+
+                        List<String> colNames = new ArrayList<>();
+                        colNames.add(AUTHOR_NAME_COL_NAME);
+                        colNames.add(DATE_ADDED_COL_NAME);
+                        List<Object> colValues = new ArrayList<>();
+                        colValues.add(authorName);
+                        colValues.add(DATE_TIME_FORMATTER.format(currentDate));
         int authorsAdded = 0;
         db.openConnection(ds);
-        authorsAdded = db.insertInto(authorTableName, authorTableColNames, 
-                authorTableColValues);
+        authorsAdded = db.insertInto(AUTHOR_TABLE_NAME, colNames, 
+                colValues);
         db.closeConnection();
         return authorsAdded;
     }

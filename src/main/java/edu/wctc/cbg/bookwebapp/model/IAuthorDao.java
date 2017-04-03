@@ -23,56 +23,45 @@ public interface IAuthorDao {
      * @throws ClassNotFoundException
      * @throws SQLException 
      */
-    public abstract List<Author> getAuthorList(String tableName, int maxRecords) 
+    public abstract List<Author> getAuthorList() 
             throws ClassNotFoundException, SQLException;
     /**
      * 
-     * @param authorTableName
-     * @param authorIdColName
      * @param authorId
      * @return
      * @throws ClassNotFoundException
      * @throws SQLException 
      */
-    public abstract Author retrieveAuthor(String authorTableName, String 
-            authorIdColName, String authorId)throws ClassNotFoundException, 
+    public abstract Author retrieveAuthor(String authorId) throws ClassNotFoundException, 
             SQLException;
     /**
      * 
-     * @param tableName
-     * @param authorIdColName
      * @param authorId
      * @return
      * @throws ClassNotFoundException
      * @throws SQLException 
      */
-    public abstract int deleteAuthorById(String tableName, String authorIdColName,
-            Object authorId) throws ClassNotFoundException, SQLException;
+    public abstract int deleteAuthorById(String authorId) throws 
+            ClassNotFoundException, SQLException;
     /**
      * 
-     * @param tableName
-     * @param colNames
-     * @param colValues
+     * @param authorName
      * @return
      * @throws ClassNotFoundException
      * @throws SQLException 
      */
-    public int addNewAuthor(String tableName, List<String> colNames, List<Object> 
-            colValues) throws ClassNotFoundException, SQLException;
+    public int addNewAuthor(String authorName) throws 
+            ClassNotFoundException, SQLException;
     /**
      * 
-     * @param authorTableName
-     * @param colNames
-     * @param colValues
-     * @param authorIdColName
+     * @param authorName
      * @param authorId
      * @return
      * @throws SQLException
      * @throws ClassNotFoundException 
      */
-    public int updateAuthorById(String authorTableName, List<String> colNames, 
-            List<Object> colValues, String authorIdColName, Object 
-                    authorId) throws SQLException,ClassNotFoundException;
+    public int updateAuthorById(String authorName, String authorId) 
+            throws SQLException,ClassNotFoundException;
     /**
      * 
      * @return 
