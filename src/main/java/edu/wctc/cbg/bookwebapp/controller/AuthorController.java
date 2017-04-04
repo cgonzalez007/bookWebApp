@@ -3,6 +3,7 @@ package edu.wctc.cbg.bookwebapp.controller;
 
 import edu.wctc.cbg.bookwebapp.model.Author;
 import edu.wctc.cbg.bookwebapp.model.AuthorFacade;
+import edu.wctc.cbg.bookwebapp.model.BookFacade;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.List;
@@ -22,50 +23,54 @@ import javax.servlet.http.HttpSession;
  */
 @WebServlet(name = "AuthorController", urlPatterns = {"/ac"})
 public class AuthorController extends HttpServlet {
+    
+    @EJB
+    private AuthorFacade authorService;
+    @EJB
+    private BookFacade bookService;
+    
     public static final String ERROR_INVALID_PARAM = "ERROR: Invalid Parameter";
     
     /*pages*/
-    public static final String ERROR_PAGE = "/errorPage.jsp"; 
-    public static final String HOME_PAGE = "index.jsp";
-    public static final String AUTHOR_LIST_PAGE = "/authorList.jsp";
-    public static final String ADD_EDIT_AUTHOR_PAGE = "/addEditAuthor.jsp";
+    private static final String ERROR_PAGE = "/errorPage.jsp"; 
+    private static final String HOME_PAGE = "index.jsp";
+    private static final String AUTHOR_LIST_PAGE = "/authorList.jsp";
+    private static final String ADD_EDIT_AUTHOR_PAGE = "/addEditAuthor.jsp";
     
     /*authors list attribute set by this controller class*/
-    public static final String AUTHOR_LIST_ATTRIBUTE = "authors";
+    private static final String AUTHOR_LIST_ATTRIBUTE = "authors";
     
     /*attribute's name used to indicate request type*/
-    public static final String REQUEST_TYPE = "rType";
+    private static final String REQUEST_TYPE = "rType";
     /*List of special request types that indicate an action to perform*/
-    public static final String RTYPE_AUTHOR_LIST = "authorList";
-    public static final String RTYPE_HOME = "home";
-    public static final String RTYPE_DELETE_AUTHOR = "deleteAuthor";
-    public static final String RTYPE_ADD_AUTHOR = "addAuthor";
-    public static final String RTYPE_EDIT_AUTHOR = "editAuthor";
-    public static final String RTYPE_SAVE_AUTHOR = "saveAuthor";
+    private static final String RTYPE_AUTHOR_LIST = "authorList";
+    private static final String RTYPE_HOME = "home";
+    private static final String RTYPE_DELETE_AUTHOR = "deleteAuthor";
+    private static final String RTYPE_ADD_AUTHOR = "addAuthor";
+    private static final String RTYPE_EDIT_AUTHOR = "editAuthor";
+    private static final String RTYPE_SAVE_AUTHOR = "saveAuthor";
     
     /*Html check box used to determine what author to delete*/
-    public static final String CHECKBOX_NAME_AUTHOR_ID = "authorId";
+    private static final String CHECKBOX_NAME_AUTHOR_ID = "authorId";
     /*attribute sent through a query string to indicate which author to edit
         info for*/
-    public static final String AUTHOR_ID_TO_EDIT = "id";
+    private static final String AUTHOR_ID_TO_EDIT = "id";
     /*Attribute name shown in Author list page to display number of updates
     made in list for the session/ throughout app*/
-    public static final String NUMBER_HITS_SESSION = "hitsSession";
-    public static final String NUMBER_HITS_APP = "hitsApp";
+    private static final String NUMBER_HITS_SESSION = "hitsSession";
+    private static final String NUMBER_HITS_APP = "hitsApp";
     
     /*Html text inputs that display a specified author info*/
-    public static final String INPUT_AUTHOR_ID = "authorId";
-    public static final String INPUT_AUTHOR_NAME = "authorName";
-    public static final String INPUT_DATE_ADDED = "dateAdded";
+    private static final String INPUT_AUTHOR_ID = "authorId";
+    private static final String INPUT_AUTHOR_NAME = "authorName";
+    private static final String INPUT_DATE_ADDED = "dateAdded";
     
     /**
      * To be used to redirect users to Author list page. Prevents resubmission
      * after refresh
      */
-    public static final String AUTHOR_LIST_REQUEST = "ac?rType=authorList";
+    private static final String AUTHOR_LIST_REQUEST = "ac?rType=authorList";
     
-    @EJB
-    private AuthorFacade authService;
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
      * methods.
@@ -101,21 +106,22 @@ public class AuthorController extends HttpServlet {
             
             if(requestType.equalsIgnoreCase(RTYPE_AUTHOR_LIST)){
                 destination = AUTHOR_LIST_PAGE;
-                List<Author> authors = authService.findAll();
+                List<Author> authors = authorService.findAll();
                 request.setAttribute(AUTHOR_LIST_ATTRIBUTE, authors);
             }else if(requestType.equalsIgnoreCase(RTYPE_HOME)){
                 /*Instead of dispatching a request object*/
                  response.sendRedirect(response.encodeRedirectURL(HOME_PAGE));
                  return;
             }else if(requestType.equalsIgnoreCase(RTYPE_DELETE_AUTHOR)){
-                destination = AUTHOR_LIST_PAGE;
                 String[] authorsToDelete = request.getParameterValues(CHECKBOX_NAME_AUTHOR_ID);
                 if(authorsToDelete != null){
                     for(String id : authorsToDelete){
-                        authService.deleteAuthorById(id);
+                        authorService.deleteAuthorById(id);
                     }
                 }
-                refreshResults(request, authService);
+                refreshResults(request, authorService);
+                response.sendRedirect(response.encodeURL(AUTHOR_LIST_REQUEST));
+                return;
             }else if(requestType.equalsIgnoreCase(RTYPE_ADD_AUTHOR)){
                 destination = ADD_EDIT_AUTHOR_PAGE;
             }else if(requestType.equalsIgnoreCase(RTYPE_EDIT_AUTHOR)){
@@ -123,7 +129,7 @@ public class AuthorController extends HttpServlet {
                 /*If we are editing customer information, we must retrieve the id of the 
                 author selected, based on an attribute created by a query string*/
                 String id  = request.getParameter(AUTHOR_ID_TO_EDIT);
-                Author author = authService.find(id);
+                Author author = authorService.find(id);
                 request.setAttribute(INPUT_AUTHOR_ID, author.getAuthorId());
                 request.setAttribute(INPUT_AUTHOR_NAME, author.getAuthorName());
                 request.setAttribute(INPUT_DATE_ADDED, author.getDateAdded());
@@ -135,13 +141,13 @@ public class AuthorController extends HttpServlet {
                 /*Test to check to see if authorName is null or empty. If it is, then the controller
                 will simply redirect the user to the same page (addEditAuthor)*/
                 if(authorName != null && !authorName.isEmpty()){
-                    authService.saveOrUpdate(id, authorName);
-                    refreshResults(request, authService);
+                    authorService.addOrUpdate(id, authorName);
+                    refreshResults(request, authorService);
                     response.sendRedirect(response.encodeURL(AUTHOR_LIST_REQUEST));
                     return;
                 }else{
                     if(id != null && !id.isEmpty()){
-                        Author author = authService.find(id);
+                        Author author = authorService.find(id);
                         request.setAttribute(INPUT_AUTHOR_ID, author.getAuthorId());
                         request.setAttribute(INPUT_AUTHOR_NAME, author.getAuthorName());
                         request.setAttribute(INPUT_DATE_ADDED, author.getDateAdded());

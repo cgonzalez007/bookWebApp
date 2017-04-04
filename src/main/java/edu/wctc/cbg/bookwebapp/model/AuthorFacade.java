@@ -24,9 +24,9 @@ public class AuthorFacade extends AbstractFacade<Author> {
         super(Author.class);
     }
     
-    public void deleteAuthorById(String id){
-        Author a = this.getEntityManager().find(Author.class, new Integer(id));
-        this.remove(a);
+    public void deleteAuthorById(String id){    
+        Author author = this.find(new Integer(id));
+        this.remove(author);     
     }
     
     public void addNew(String name) {
@@ -44,7 +44,7 @@ public class AuthorFacade extends AbstractFacade<Author> {
         this.edit(a);
     }
     
-    public void saveOrUpdate(String id, String name){   
+    public void addOrUpdate(String id, String name){   
         if(id == null || id.isEmpty() || id.equals("0")){
             addNew(name);
         }else{
@@ -52,6 +52,6 @@ public class AuthorFacade extends AbstractFacade<Author> {
         }
     }
     public Author find(String id){
-        return this.getEntityManager().find(Author.class, new Integer(id));
+        return getEntityManager().find(Author.class, new Integer(id));
     }
 }
