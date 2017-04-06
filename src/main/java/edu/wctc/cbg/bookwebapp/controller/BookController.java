@@ -1,8 +1,12 @@
 package edu.wctc.cbg.bookwebapp.controller;
 
+import edu.wctc.cbg.bookwebapp.model.Author;
 import edu.wctc.cbg.bookwebapp.model.AuthorFacade;
+import edu.wctc.cbg.bookwebapp.model.Book;
 import edu.wctc.cbg.bookwebapp.model.BookFacade;
 import java.io.IOException;
+import java.sql.SQLException;
+import java.util.List;
 import javax.ejb.EJB;
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
@@ -26,6 +30,14 @@ public class BookController extends HttpServlet {
     /*pages*/
     private static final String ERROR_PAGE = "/errorPage.jsp"; 
     private static final String HOME_PAGE = "index.jsp";
+    private static final String BOOK_LIST_PAGE = "/bookList.jsp";
+    private static final String ADD_EDIT_BOOK_PAGE = "/addEditBook.jsp";
+    
+    /**
+     * To be used to redirect users to Author list page. Prevents resubmission
+     * after refresh
+     */
+    private static final String BOOK_LIST_REQUEST = "bc?rType=bookList";
     
     /**
      * Attribute's name used to indicate request type
@@ -43,6 +55,19 @@ public class BookController extends HttpServlet {
     private static final String RTYPE_EDIT_BOOK = "editBook";
     private static final String RTYPE_SAVE_BOOK = "saveBook";
     
+    /*Html check box used to determine what author to delete*/
+    private static final String CHECKBOX_NAME_BOOK_ID = "bookId";
+    
+    /*id name property of edit button to distinquish between books*/
+    private static final String BOOK_ID_TO_EDIT = "id"; 
+    
+    /**
+     * HTML input tag names for editBook page:
+     */
+    private static final String INPUT_BOOK_ID = "bookId";
+    private static final String INPUT_TITLE = "title";
+    private static final String INPUT_ISBN = "isbn";
+    private static final String INPUT_AUTHOR_ID = "authorId";
     
     private static final String ERROR_INVALID_PARAM = "ERROR: Invalid Parameter";
     
@@ -63,13 +88,34 @@ public class BookController extends HttpServlet {
         
         try{
             if(requestType.equalsIgnoreCase(RTYPE_DELETE_BOOK)){
-               
+                String[] booksToDelete = request.getParameterValues(CHECKBOX_NAME_BOOK_ID);
+                if(booksToDelete != null){
+                    for(String id : booksToDelete){
+                        bookService.deleteBook(id);
+                    }
+                }
+                response.sendRedirect(response.encodeURL(BOOK_LIST_REQUEST));
+                return;
+            }else if(requestType.equalsIgnoreCase(RTYPE_ADD_BOOK)){
+                destination = ADD_EDIT_BOOK_PAGE;
+            }else if(requestType.equalsIgnoreCase(RTYPE_EDIT_BOOK)){
+                destination = ADD_EDIT_BOOK_PAGE;
+                
+                String id = request.getParameter(BOOK_ID_TO_EDIT);
+                Book book = bookService.find(id);
+                request.setAttribute(INPUT_BOOK_ID, book.getBookId());
+                request.setAttribute(INPUT_TITLE, book.getTitle());
+                request.setAttribute(INPUT_ISBN, book.getIsbn());
+                request.setAttribute(INPUT_AUTHOR_ID, book.getAuthor().getAuthorId());
             }else if(requestType.equalsIgnoreCase(RTYPE_SAVE_BOOK)){
-            
+                
             }else if(requestType.equalsIgnoreCase(RTYPE_BOOK_LIST)){
-            
+                destination = BOOK_LIST_PAGE;
+                List<Book> books = bookService.findAll();
+                request.setAttribute("books", books);
             }
         }catch(Exception e){
+            destination = ERROR_PAGE;
             request.setAttribute("errorMsg", ERROR_INVALID_PARAM);
         }
         RequestDispatcher dispatcher = getServletContext().

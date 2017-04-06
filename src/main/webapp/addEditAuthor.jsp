@@ -51,7 +51,7 @@
                     </c:if>
             </table>
                 <br>
-                <input type="submit" id="submitChanges" name="submit" value="<fmt:message key="page.addeditauthor.button.submit.changes"/>">
+                <input type="submit" id="submitChanges" name="submitChanges" value="<fmt:message key="page.addeditauthor.button.submit.changes"/>">
                 <button type="submit" formaction="<%= response.encodeURL("ac?rType=authorList")%>" name="cancel">
                     <fmt:message key="page.addeditauthor.button.cancel"/>  </button>
             </form>

@@ -23,6 +23,9 @@
                 <li>
                     <a href="<%= response.encodeURL("ac?rType=authorList")%>"><fmt:message key="page.home.link.go.to.author.list"/></a>
                 </li>
+                <li>
+                    <a href="<%= response.encodeURL("bc?rType=bookList")%>">Go to Books List</a>
+                </li>
             </ul>
         </body>
         <br>

@@ -119,7 +119,6 @@ public class AuthorController extends HttpServlet {
                         authorService.deleteAuthorById(id);
                     }
                 }
-                refreshResults(request, authorService);
                 response.sendRedirect(response.encodeURL(AUTHOR_LIST_REQUEST));
                 return;
             }else if(requestType.equalsIgnoreCase(RTYPE_ADD_AUTHOR)){
@@ -142,7 +141,6 @@ public class AuthorController extends HttpServlet {
                 will simply redirect the user to the same page (addEditAuthor)*/
                 if(authorName != null && !authorName.isEmpty()){
                     authorService.addOrUpdate(id, authorName);
-                    refreshResults(request, authorService);
                     response.sendRedirect(response.encodeURL(AUTHOR_LIST_REQUEST));
                     return;
                 }else{
@@ -165,12 +163,6 @@ public class AuthorController extends HttpServlet {
         RequestDispatcher dispatcher = getServletContext().
                 getRequestDispatcher(response.encodeURL(destination));
         dispatcher.forward(request, response);
-    }
-     
-    private void refreshResults(HttpServletRequest request, AuthorFacade authService) 
-            throws ClassNotFoundException, SQLException{
-        List<Author> authors = authService.findAll();
-        request.setAttribute(AUTHOR_LIST_ATTRIBUTE, authors);
     }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">

@@ -21,9 +21,9 @@
             </h2>
             <br>
             <form id="authorFormDelete" name="authorFormDelete" method="POST" action="<%= response.encodeURL("ac?rType=deleteAuthor")%>">  
-                <button type="submit" formaction="<%= response.encodeURL("ac?rType=addAuthor")%>" name="add">
+                <button type="submit" formaction="<%= response.encodeURL("ac?rType=addAuthor")%>" name="addAuthor" id="addAuthor">
                     <fmt:message key="page.authorlist.button.add"/></button>
-                <input type="submit" id="delete" name="delete" value="<fmt:message key="page.authorlist.button.delete"/>">
+                <input type="submit" id="deleteAuthor" name="delete" value="<fmt:message key="page.authorlist.button.delete"/>">
             <br>            
             <br>
             <table class="table">
@@ -54,7 +54,7 @@
                         </c:otherwise>     
                     </c:choose>
                                 <td>
-                                    <input type="checkbox" name="authorId" class="checkedAuthors" value="${a.authorId}">
+                                    <input type="checkbox" id="authorId" name="authorId" class="checkedAuthors" value="${a.authorId}">
                                 </td>
                                 <td>
                                     ${a.authorId}
