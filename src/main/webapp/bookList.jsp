@@ -81,7 +81,7 @@
             </form>
                 <br>
                 <br>
-                <a href="<%= response.encodeURL("bc?rType=home")%>"><fmt:message key="page.authorlist.link.go.to.home.page"/></a>
+                <a href="<%= response.encodeURL("bc?rType=home")%>">Go to Home Page</a>
         </body>
         <br>
         <br>

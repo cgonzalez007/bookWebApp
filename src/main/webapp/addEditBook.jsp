@@ -54,10 +54,15 @@
                             </td>
                             <td>
                                 <input type="text" id="authorId" name="authorId" value="<c:out value="${authorId}"/>">
+                                
+                                <label for="authorSearch">Search Author (Not functional)</label>
+                                <input type="search" id="authorSearch" name="authorSearch" value="">
                             </td>
                         </tr>
                 </table>
-                    <input type="submit" id="submitChanges" name="submitChanges" value=""            
+                    <input type="submit" id="submitChanges" name="submitChanges" value="Submit Changes">    
+                    <button type="submit" formaction="<%= response.encodeURL("bc?rType=bookList")%>" name="cancel">
+                        Cancel</button>   
             </form>                            
         </body>   
         <br>
@@ -69,4 +74,5 @@
       integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
 <link href="stylesheet.css" rel="stylesheet" type="text/css"/>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+<script src="prompts.js" type="text/javascript"></script>
 </html>

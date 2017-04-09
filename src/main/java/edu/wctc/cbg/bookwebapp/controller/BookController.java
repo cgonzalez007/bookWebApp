@@ -1,11 +1,9 @@
 package edu.wctc.cbg.bookwebapp.controller;
 
-import edu.wctc.cbg.bookwebapp.model.Author;
 import edu.wctc.cbg.bookwebapp.model.AuthorFacade;
 import edu.wctc.cbg.bookwebapp.model.Book;
 import edu.wctc.cbg.bookwebapp.model.BookFacade;
 import java.io.IOException;
-import java.sql.SQLException;
 import java.util.List;
 import javax.ejb.EJB;
 import javax.servlet.RequestDispatcher;
@@ -87,7 +85,11 @@ public class BookController extends HttpServlet {
         String destination = HOME_PAGE;
         
         try{
-            if(requestType.equalsIgnoreCase(RTYPE_DELETE_BOOK)){
+            if(requestType.equalsIgnoreCase(RTYPE_HOME)){
+                /*Instead of dispatching a request object*/
+                 response.sendRedirect(response.encodeRedirectURL(HOME_PAGE));
+                 return;
+            }else if(requestType.equalsIgnoreCase(RTYPE_DELETE_BOOK)){
                 String[] booksToDelete = request.getParameterValues(CHECKBOX_NAME_BOOK_ID);
                 if(booksToDelete != null){
                     for(String id : booksToDelete){
@@ -108,15 +110,36 @@ public class BookController extends HttpServlet {
                 request.setAttribute(INPUT_ISBN, book.getIsbn());
                 request.setAttribute(INPUT_AUTHOR_ID, book.getAuthor().getAuthorId());
             }else if(requestType.equalsIgnoreCase(RTYPE_SAVE_BOOK)){
+                String id = request.getParameter(INPUT_BOOK_ID);
+                String title = request.getParameter(INPUT_TITLE); 
+                String isbn = request.getParameter(INPUT_ISBN);
+                String authorId = request.getParameter(INPUT_AUTHOR_ID); 
                 
+                if(title != null && !title.isEmpty() && isbn != null && !isbn.isEmpty() 
+                        && authorId != null && !authorId.isEmpty()){
+                    bookService.addOrUpdate(id, title, isbn, authorId);
+                    response.sendRedirect(response.encodeURL(BOOK_LIST_REQUEST));
+                    return;
+                }else{
+                    if(id != null && !id.isEmpty()){
+                        Book book = bookService.find(id);
+                        request.setAttribute(INPUT_BOOK_ID, book.getBookId());
+                        request.setAttribute(INPUT_TITLE, book.getTitle());
+                        request.setAttribute(INPUT_ISBN, book.getIsbn());
+                        request.setAttribute(INPUT_AUTHOR_ID, book.getAuthor().getAuthorId());
+                    }
+                    destination = ADD_EDIT_BOOK_PAGE;
+                }
             }else if(requestType.equalsIgnoreCase(RTYPE_BOOK_LIST)){
                 destination = BOOK_LIST_PAGE;
                 List<Book> books = bookService.findAll();
                 request.setAttribute("books", books);
+            }else{
+                request.setAttribute("errorMsg", ERROR_INVALID_PARAM);
             }
         }catch(Exception e){
             destination = ERROR_PAGE;
-            request.setAttribute("errorMsg", ERROR_INVALID_PARAM);
+            request.setAttribute("errorMsg", e.getMessage());
         }
         RequestDispatcher dispatcher = getServletContext().
                 getRequestDispatcher(response.encodeURL(destination));

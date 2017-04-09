@@ -133,7 +133,6 @@ public class AuthorController extends HttpServlet {
                 request.setAttribute(INPUT_AUTHOR_NAME, author.getAuthorName());
                 request.setAttribute(INPUT_DATE_ADDED, author.getDateAdded());
             }else if(requestType.equalsIgnoreCase(RTYPE_SAVE_AUTHOR)){
-                destination = AUTHOR_LIST_PAGE; 
                 String authorName = request.getParameter(INPUT_AUTHOR_NAME);
                 String id = request.getParameter(INPUT_AUTHOR_ID);
                 

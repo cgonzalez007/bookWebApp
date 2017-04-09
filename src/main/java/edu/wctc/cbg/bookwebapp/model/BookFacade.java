@@ -35,27 +35,28 @@ public class BookFacade extends AbstractFacade<Book> {
         book.setTitle(title);
         book.setIsbn(isbn);
         book.setAuthor(author);
-        this.create(book);
-        
+        this.create(book);        
+        System.out.println(author.toString() + "\n" + book.toString());
     }
     
     public void update(String bookId, String title, String isbn, String authorId){
         Author author = getEntityManager().find(Author.class, new Integer(authorId));
         
-        Book book = find(bookId);
+        Book book = this.find(bookId);
         
         book.setTitle(title);
         book.setIsbn(isbn);
         book.setAuthor(author);
         
         this.edit(book);
+        System.out.println(author.toString() + "\n" + book.toString());
     }
     
     public void addOrUpdate(String bookId, String title, String isbn, String authorId){   
         if(bookId == null || bookId.isEmpty() || bookId.equals("0")){
             addNew(title, isbn, authorId);
         }else{
-            addOrUpdate(bookId, title, isbn, authorId);
+            update(bookId, title, isbn, authorId);
         }
     }
     public Book find(String id){
