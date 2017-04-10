@@ -50,13 +50,23 @@
                         </tr>
                         <tr>
                             <td>
-                                Author ID
+                                Author 
                             </td>
                             <td>
-                                <input type="text" id="authorId" name="authorId" value="<c:out value="${authorId}"/>">
-                                
-                                <label for="authorSearch">Search Author (Not functional)</label>
-                                <input type="search" id="authorSearch" name="authorSearch" value="">
+                                <select id="authorSelect" name="authorSelect">
+                                    <c:forEach var="a" items="${authors}" varStatus="varStatus">
+                                        <c:choose>
+                                            <c:when test="${authorId == a.authorId}">  
+                                                <option value="${a.authorId}" selected="selected">
+                                            </c:when>
+                                            <c:otherwise>
+                                                <option value="${a.authorId}">
+                                            </c:otherwise>
+                                        </c:choose>
+                                            ${a.authorName}
+                                        </option>
+                                    </c:forEach>
+                                </select>
                             </td>
                         </tr>
                 </table>

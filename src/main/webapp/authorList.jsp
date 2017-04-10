@@ -72,8 +72,7 @@
                             </tr>  
                 </c:forEach>             
             </table>
-            </form>   
-            <br>    
+            </form>     
             <br>
             <a href="<%= response.encodeURL("ac?rType=home")%>"><fmt:message key="page.authorlist.link.go.to.home.page"/></a>
         </body>

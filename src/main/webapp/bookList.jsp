@@ -44,6 +44,9 @@
                             Author ID
                         </th>
                         <th>
+                            Author Name
+                        </th>
+                        <th>
                             
                         </th>
                     </tr>
@@ -72,6 +75,9 @@
                                         ${b.author.authorId}                               
                                     </td>
                                     <td>
+                                        ${b.author.authorName}                               
+                                    </td>
+                                    <td>
                                         <button type="submit" formaction="<c:url value="bc?rType=editBook&id=${b.bookId}"/>" value="${b.bookId}" name="edit">
                                             Edit</button>
                                     </td>
@@ -79,7 +85,6 @@
                     </c:forEach>
                 </table>
             </form>
-                <br>
                 <br>
                 <a href="<%= response.encodeURL("bc?rType=home")%>">Go to Home Page</a>
         </body>

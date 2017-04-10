@@ -1,5 +1,6 @@
 package edu.wctc.cbg.bookwebapp.controller;
 
+import edu.wctc.cbg.bookwebapp.model.Author;
 import edu.wctc.cbg.bookwebapp.model.AuthorFacade;
 import edu.wctc.cbg.bookwebapp.model.Book;
 import edu.wctc.cbg.bookwebapp.model.BookFacade;
@@ -38,10 +39,11 @@ public class BookController extends HttpServlet {
     private static final String BOOK_LIST_REQUEST = "bc?rType=bookList";
     
     /**
-     * Attribute's name used to indicate request type
+     * Attributes:
      */
-    
     private static final String REQUEST_TYPE = "rType";
+    private static final String AUTHORS = "authors";
+    private static final String BOOKS = "books"; 
     
     /**
      * Request types:
@@ -65,7 +67,16 @@ public class BookController extends HttpServlet {
     private static final String INPUT_BOOK_ID = "bookId";
     private static final String INPUT_TITLE = "title";
     private static final String INPUT_ISBN = "isbn";
-    private static final String INPUT_AUTHOR_ID = "authorId";
+    
+    /**
+     * AuthorId name for book:
+     */
+    private static final String AUTHOR_ID = "authorId";
+
+    /**
+     * HTML select tag name:
+     */
+    private static final String SELECT_AUTHORS = "authorSelect";
     
     private static final String ERROR_INVALID_PARAM = "ERROR: Invalid Parameter";
     
@@ -100,6 +111,9 @@ public class BookController extends HttpServlet {
                 return;
             }else if(requestType.equalsIgnoreCase(RTYPE_ADD_BOOK)){
                 destination = ADD_EDIT_BOOK_PAGE;
+                
+                List<Author> authors = authorService.findAll();
+                request.setAttribute(AUTHORS, authors);
             }else if(requestType.equalsIgnoreCase(RTYPE_EDIT_BOOK)){
                 destination = ADD_EDIT_BOOK_PAGE;
                 
@@ -108,13 +122,17 @@ public class BookController extends HttpServlet {
                 request.setAttribute(INPUT_BOOK_ID, book.getBookId());
                 request.setAttribute(INPUT_TITLE, book.getTitle());
                 request.setAttribute(INPUT_ISBN, book.getIsbn());
-                request.setAttribute(INPUT_AUTHOR_ID, book.getAuthor().getAuthorId());
+                /*Used to set default author displayed in HTML select*/
+                request.setAttribute(AUTHOR_ID, book.getAuthor().getAuthorId());
+                
+                List<Author> authors = authorService.findAll();
+                request.setAttribute(AUTHORS, authors);
             }else if(requestType.equalsIgnoreCase(RTYPE_SAVE_BOOK)){
                 String id = request.getParameter(INPUT_BOOK_ID);
                 String title = request.getParameter(INPUT_TITLE); 
                 String isbn = request.getParameter(INPUT_ISBN);
-                String authorId = request.getParameter(INPUT_AUTHOR_ID); 
-                
+                String authorId = request.getParameter(SELECT_AUTHORS);
+               
                 if(title != null && !title.isEmpty() && isbn != null && !isbn.isEmpty() 
                         && authorId != null && !authorId.isEmpty()){
                     bookService.addOrUpdate(id, title, isbn, authorId);
@@ -126,14 +144,17 @@ public class BookController extends HttpServlet {
                         request.setAttribute(INPUT_BOOK_ID, book.getBookId());
                         request.setAttribute(INPUT_TITLE, book.getTitle());
                         request.setAttribute(INPUT_ISBN, book.getIsbn());
-                        request.setAttribute(INPUT_AUTHOR_ID, book.getAuthor().getAuthorId());
+                        request.setAttribute(AUTHOR_ID, book.getAuthor().getAuthorId());
+                        
+                        List<Author> authors = authorService.findAll();
+                        request.setAttribute(AUTHORS, authors);
                     }
                     destination = ADD_EDIT_BOOK_PAGE;
                 }
             }else if(requestType.equalsIgnoreCase(RTYPE_BOOK_LIST)){
                 destination = BOOK_LIST_PAGE;
                 List<Book> books = bookService.findAll();
-                request.setAttribute("books", books);
+                request.setAttribute(BOOKS, books);
             }else{
                 request.setAttribute("errorMsg", ERROR_INVALID_PARAM);
             }
