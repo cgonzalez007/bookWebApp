@@ -13,6 +13,7 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 /**
  *
@@ -25,6 +26,8 @@ public class BookController extends HttpServlet {
     private AuthorFacade authorService;
     @EJB
     private BookFacade bookService;
+    
+    private static final String ATTR_SESSION_NUMBER_CHANGES = "sessionChanges";
     
     /*pages*/
     private static final String ERROR_PAGE = "/errorPage.jsp"; 
@@ -96,6 +99,8 @@ public class BookController extends HttpServlet {
         String destination = HOME_PAGE;
         
         try{
+            HttpSession session = request.getSession();
+            
             if(requestType.equalsIgnoreCase(RTYPE_HOME)){
                 /*Instead of dispatching a request object*/
                  response.sendRedirect(response.encodeRedirectURL(HOME_PAGE));
@@ -107,6 +112,7 @@ public class BookController extends HttpServlet {
                         bookService.deleteBook(id);
                     }
                 }
+                this.addToChangesMade(session);
                 response.sendRedirect(response.encodeURL(BOOK_LIST_REQUEST));
                 return;
             }else if(requestType.equalsIgnoreCase(RTYPE_ADD_BOOK)){
@@ -136,6 +142,7 @@ public class BookController extends HttpServlet {
                 if(title != null && !title.isEmpty() && isbn != null && !isbn.isEmpty() 
                         && authorId != null && !authorId.isEmpty()){
                     bookService.addOrUpdate(id, title, isbn, authorId);
+                    this.addToChangesMade(session);
                     response.sendRedirect(response.encodeURL(BOOK_LIST_REQUEST));
                     return;
                 }else{
@@ -166,7 +173,7 @@ public class BookController extends HttpServlet {
                 getRequestDispatcher(response.encodeURL(destination));
         dispatcher.forward(request, response);
     }
-
+    
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
     /**
      * Handles the HTTP <code>GET</code> method.
@@ -205,5 +212,12 @@ public class BookController extends HttpServlet {
     public String getServletInfo() {
         return "Short description";
     }// </editor-fold>
-
+    private void addToChangesMade(HttpSession session) {
+        Object sessionChanges = session.getAttribute(ATTR_SESSION_NUMBER_CHANGES);
+        if (sessionChanges != null) {
+            session.setAttribute(ATTR_SESSION_NUMBER_CHANGES, Integer.parseInt(sessionChanges.toString()) + 1);
+        } else {
+            session.setAttribute(ATTR_SESSION_NUMBER_CHANGES, 1);
+        }
+    }
 }

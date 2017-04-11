@@ -49,6 +49,20 @@
                             </td>
                         </tr>  
                     </c:if>
+                        <tr>
+                            <td>
+                                <fmt:message key="page.addeditauthor.input.bookswritten"/>  
+                            </td>
+                            <td>
+                                <ul>
+                                    <c:forEach var="b" items="${books}" varStatus="varStatus">
+                                        <li>
+                                            ${b.title}
+                                        </li>
+                                    </c:forEach>
+                                </ul>
+                            </td>
+                        </tr>  
             </table>
                 <br>
                 <input type="submit" id="submitChanges" name="submitChanges" value="<fmt:message key="page.addeditauthor.button.submit.changes"/>">

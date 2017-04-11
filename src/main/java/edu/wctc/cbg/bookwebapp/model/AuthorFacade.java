@@ -1,6 +1,7 @@
 package edu.wctc.cbg.bookwebapp.model;
 
 import java.util.Date;
+import java.util.List;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -51,6 +52,7 @@ public class AuthorFacade extends AbstractFacade<Author> {
             update(id, name);
         }
     }
+    
     public Author find(String id){
         return getEntityManager().find(Author.class, new Integer(id));
     }

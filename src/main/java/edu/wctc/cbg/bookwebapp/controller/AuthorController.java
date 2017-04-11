@@ -3,13 +3,12 @@ package edu.wctc.cbg.bookwebapp.controller;
 
 import edu.wctc.cbg.bookwebapp.model.Author;
 import edu.wctc.cbg.bookwebapp.model.AuthorFacade;
+import edu.wctc.cbg.bookwebapp.model.Book;
 import edu.wctc.cbg.bookwebapp.model.BookFacade;
 import java.io.IOException;
-import java.sql.SQLException;
 import java.util.List;
 import javax.ejb.EJB;
 import javax.servlet.RequestDispatcher;
-import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -31,6 +30,8 @@ public class AuthorController extends HttpServlet {
     
     public static final String ERROR_INVALID_PARAM = "ERROR: Invalid Parameter";
     
+    private static final String ATTR_SESSION_NUMBER_CHANGES = "sessionChanges";
+    
     /*pages*/
     private static final String ERROR_PAGE = "/errorPage.jsp"; 
     private static final String HOME_PAGE = "index.jsp";
@@ -39,6 +40,8 @@ public class AuthorController extends HttpServlet {
     
     /*authors list attribute set by this controller class*/
     private static final String AUTHOR_LIST_ATTRIBUTE = "authors";
+    /*book list attribute*/
+    private static final String BOOKS_LIST_ATTRIBUTE = "books";
     
     /*attribute's name used to indicate request type*/
     private static final String REQUEST_TYPE = "rType";
@@ -87,22 +90,6 @@ public class AuthorController extends HttpServlet {
         String destination = HOME_PAGE;
         try {
             HttpSession session = request.getSession();
-            Object sessHits = session.getAttribute(NUMBER_HITS_SESSION);
-            if(sessHits != null){
-                session.setAttribute(NUMBER_HITS_SESSION, Integer.parseInt(sessHits.toString())+1);
-            }else{
-                session.setAttribute(NUMBER_HITS_SESSION,1);
-            }
-            
-            ServletContext ctx = request.getServletContext();
-            synchronized(ctx) {
-                Object appHits = ctx.getAttribute(NUMBER_HITS_APP);
-                if(appHits != null){
-                   ctx.setAttribute(NUMBER_HITS_APP, Integer.parseInt(appHits.toString())+1);
-                }else{
-                   ctx.setAttribute(NUMBER_HITS_APP,1);
-                }
-            }
             
             if(requestType.equalsIgnoreCase(RTYPE_AUTHOR_LIST)){
                 destination = AUTHOR_LIST_PAGE;
@@ -119,6 +106,7 @@ public class AuthorController extends HttpServlet {
                         authorService.deleteAuthorById(id);
                     }
                 }
+                this.addToChangesMade(session);
                 response.sendRedirect(response.encodeURL(AUTHOR_LIST_REQUEST));
                 return;
             }else if(requestType.equalsIgnoreCase(RTYPE_ADD_AUTHOR)){
@@ -132,6 +120,9 @@ public class AuthorController extends HttpServlet {
                 request.setAttribute(INPUT_AUTHOR_ID, author.getAuthorId());
                 request.setAttribute(INPUT_AUTHOR_NAME, author.getAuthorName());
                 request.setAttribute(INPUT_DATE_ADDED, author.getDateAdded());
+                
+                List<Book> books = bookService.findBooksByAuthorId(id);
+                request.setAttribute(BOOKS_LIST_ATTRIBUTE, books);
             }else if(requestType.equalsIgnoreCase(RTYPE_SAVE_AUTHOR)){
                 String authorName = request.getParameter(INPUT_AUTHOR_NAME);
                 String id = request.getParameter(INPUT_AUTHOR_ID);
@@ -140,6 +131,7 @@ public class AuthorController extends HttpServlet {
                 will simply redirect the user to the same page (addEditAuthor)*/
                 if(authorName != null && !authorName.isEmpty()){
                     authorService.addOrUpdate(id, authorName);
+                    this.addToChangesMade(session);
                     response.sendRedirect(response.encodeURL(AUTHOR_LIST_REQUEST));
                     return;
                 }else{
@@ -148,6 +140,9 @@ public class AuthorController extends HttpServlet {
                         request.setAttribute(INPUT_AUTHOR_ID, author.getAuthorId());
                         request.setAttribute(INPUT_AUTHOR_NAME, author.getAuthorName());
                         request.setAttribute(INPUT_DATE_ADDED, author.getDateAdded());
+                        
+                        List<Book> books = bookService.findBooksByAuthorId(id);
+                        request.setAttribute(BOOKS_LIST_ATTRIBUTE, books);
                     }
                     destination = ADD_EDIT_AUTHOR_PAGE;
                 }
@@ -202,7 +197,14 @@ public class AuthorController extends HttpServlet {
     public String getServletInfo() {
         return "Short description";
     }// </editor-fold>
-    
+    private void addToChangesMade(HttpSession session) {
+        Object sessionChanges = session.getAttribute(ATTR_SESSION_NUMBER_CHANGES);
+        if (sessionChanges != null) {
+            session.setAttribute(ATTR_SESSION_NUMBER_CHANGES, Integer.parseInt(sessionChanges.toString()) + 1);
+        } else {
+            session.setAttribute(ATTR_SESSION_NUMBER_CHANGES, 1);
+        }
+    }
     @Override
     public final void init() throws ServletException {
 

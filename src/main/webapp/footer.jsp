@@ -9,11 +9,8 @@
     Chris Gonzalez 2017
     <br>
     <br>
-    <span style="font-size: .8em;">
-    <fmt:message key="page.footer.app.hits"/>  <c:out default="0" value="${hitsApp}"/>
-    &nbsp;
-    &nbsp;            
-    <fmt:message key="page.footer.session.hits"/>  <c:out default="0" value="${hitsSession}"/>
+    <span style="font-size: .8em;">          
+    <fmt:message key="page.footer.session.hits"/>  <c:out default="0" value="${sessionChanges}"/>
     <br>    
     <fmt:message key="page.footer.app.date"/>  <fmt:formatDate pattern="M/d/yyyy hh:mm:ss a" value="${dateInitialized}"/>
     &nbsp;

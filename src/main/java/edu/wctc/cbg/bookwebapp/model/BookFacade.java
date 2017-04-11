@@ -1,8 +1,10 @@
 package edu.wctc.cbg.bookwebapp.model;
 
+import java.util.List;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.persistence.TypedQuery;
 
 /**
  *
@@ -59,7 +61,16 @@ public class BookFacade extends AbstractFacade<Book> {
             update(bookId, title, isbn, authorId);
         }
     }
+    
     public Book find(String id){
         return getEntityManager().find(Book.class, new Integer(id));
+    }
+    
+    public List<Book> findBooksByAuthorId(String authorId){
+        String jpql = "SELECT b FROM Book b WHERE b.author.authorId = :authorId";
+        TypedQuery<Book> q = getEntityManager().createQuery(jpql, Book.class);
+        q.setParameter("authorId", new Integer(authorId));
+        
+        return q.getResultList();
     }
 }
