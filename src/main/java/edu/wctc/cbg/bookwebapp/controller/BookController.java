@@ -111,8 +111,9 @@ public class BookController extends HttpServlet {
                     for(String id : booksToDelete){
                         bookService.deleteBook(id);
                     }
+                    this.addToChangesMade(session);
                 }
-                this.addToChangesMade(session);
+                
                 response.sendRedirect(response.encodeURL(BOOK_LIST_REQUEST));
                 return;
             }else if(requestType.equalsIgnoreCase(RTYPE_ADD_BOOK)){
@@ -131,7 +132,7 @@ public class BookController extends HttpServlet {
                 /*Used to set default author displayed in HTML select*/
                 request.setAttribute(AUTHOR_ID, book.getAuthor().getAuthorId());
                 
-                List<Author> authors = authorService.findAllAlphabetized();
+                List<Author> authors = authorService.findAll();
                 request.setAttribute(AUTHORS, authors);
             }else if(requestType.equalsIgnoreCase(RTYPE_SAVE_BOOK)){
                 String id = request.getParameter(INPUT_BOOK_ID);
@@ -153,7 +154,7 @@ public class BookController extends HttpServlet {
                         request.setAttribute(INPUT_ISBN, book.getIsbn());
                         request.setAttribute(AUTHOR_ID, book.getAuthor().getAuthorId());
                         
-                        List<Author> authors = authorService.findAllAlphabetized();
+                        List<Author> authors = authorService.findAll();
                         request.setAttribute(AUTHORS, authors);
                     }
                     destination = ADD_EDIT_BOOK_PAGE;

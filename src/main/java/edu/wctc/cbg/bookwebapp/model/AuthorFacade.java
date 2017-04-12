@@ -58,7 +58,10 @@ public class AuthorFacade extends AbstractFacade<Author> {
     public Author find(String id){
         return getEntityManager().find(Author.class, new Integer(id));
     }
-    
+    /**
+     * Not currently working...
+     * @return 
+     */
     public List<Author> findAllAlphabetized(){
         String jpql = "SELECT a FROM Author a ORDER BY a.authorName ASC";
         TypedQuery<Author> q = getEntityManager().createQuery(jpql, Author.class);

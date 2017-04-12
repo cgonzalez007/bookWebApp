@@ -49,6 +49,7 @@
                             </td>
                         </tr>  
                     </c:if>
+                    <c:if test="${not empty authorId}">    
                         <tr>
                             <td>
                                 <fmt:message key="page.addeditauthor.input.bookswritten"/>  
@@ -63,6 +64,7 @@
                                 </ul>
                             </td>
                         </tr>  
+                    </c:if>    
             </table>
                 <br>
                 <input type="submit" id="submitChanges" name="submitChanges" value="<fmt:message key="page.addeditauthor.button.submit.changes"/>">

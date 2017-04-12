@@ -105,8 +105,9 @@ public class AuthorController extends HttpServlet {
                     for(String id : authorsToDelete){
                         authorService.deleteAuthorById(id);
                     }
+                    this.addToChangesMade(session);
                 }
-                this.addToChangesMade(session);
+                
                 response.sendRedirect(response.encodeURL(AUTHOR_LIST_REQUEST));
                 return;
             }else if(requestType.equalsIgnoreCase(RTYPE_ADD_AUTHOR)){
