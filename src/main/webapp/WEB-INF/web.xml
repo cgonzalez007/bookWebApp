@@ -3,6 +3,19 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
          xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee 
                             http://xmlns.jcp.org/xml/ns/javaee/web-app_3_1.xsd">
+    <!-- Begin Spring-specific configuration -->
+    <context-param>
+        <param-name>contextConfigLocation</param-name>
+        <param-value>classpath:applicationContext.xml</param-value>
+    </context-param>
+        
+    <listener>
+        <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
+    </listener>
+    <listener>
+        <listener-class>org.springframework.web.context.request.RequestContextListener</listener-class>
+    </listener>
+    <!-- END Spring configuration -->
     <!-- This is an example of an application-wide init
     param. It's called a ServletContext init param. You can
     have as many init params as you want but there is only one
@@ -22,30 +35,6 @@
     <context-param>
         <param-name>connPoolName</param-name>
         <param-value>jdbc/book</param-value>
-    </context-param>
-    <context-param>
-        <param-name>authorDao</param-name>
-        <param-value>edu.wctc.cbg.bookwebapp.model.ConnPoolAuthorDao</param-value>
-    </context-param>
-    <context-param>
-        <param-name>dbStrategy</param-name>
-        <param-value>edu.wctc.cbg.bookwebapp.model.MySqlDbAccessor</param-value>
-    </context-param>
-    <context-param>
-        <param-name>driverClass</param-name>
-        <param-value>com.mysql.jdbc.Driver</param-value>
-    </context-param>
-    <context-param>
-        <param-name>url</param-name>
-        <param-value>jdbc:mysql://localhost:3306/book</param-value>
-    </context-param>
-    <context-param>
-        <param-name>username</param-name>
-        <param-value>root</param-value>
-    </context-param>
-    <context-param>
-        <param-name>password</param-name>
-        <param-value>admin</param-value>
     </context-param>
     <session-config>
         <session-timeout>

@@ -1,20 +1,22 @@
 package edu.wctc.cbg.bookwebapp.controller;
 
 
-import edu.wctc.cbg.bookwebapp.model.Author;
-import edu.wctc.cbg.bookwebapp.model.AuthorFacade;
-import edu.wctc.cbg.bookwebapp.model.Book;
-import edu.wctc.cbg.bookwebapp.model.BookFacade;
+import edu.wctc.cbg.bookwebapp.entity.Author;
+import edu.wctc.cbg.bookwebapp.entity.Book;
+import edu.wctc.cbg.bookwebapp.service.AuthorService;
+import edu.wctc.cbg.bookwebapp.service.BookService;
 import java.io.IOException;
 import java.util.List;
-import javax.ejb.EJB;
 import javax.servlet.RequestDispatcher;
+import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import org.springframework.web.context.WebApplicationContext;
+import org.springframework.web.context.support.WebApplicationContextUtils;
 
 /**
  *
@@ -23,10 +25,8 @@ import javax.servlet.http.HttpSession;
 @WebServlet(name = "AuthorController", urlPatterns = {"/ac"})
 public class AuthorController extends HttpServlet {
     
-    @EJB
-    private AuthorFacade authorService;
-    @EJB
-    private BookFacade bookService;
+    private AuthorService authorService;
+    private BookService bookService;
     
     public static final String ERROR_INVALID_PARAM = "ERROR: Invalid Parameter";
     
@@ -208,6 +208,10 @@ public class AuthorController extends HttpServlet {
     }
     @Override
     public final void init() throws ServletException {
-
+        // Ask Spring for object to inject
+        ServletContext sctx = getServletContext();
+        WebApplicationContext ctx = WebApplicationContextUtils.getWebApplicationContext(sctx);
+        authorService = (AuthorService) ctx.getBean("authorService");
+        bookService = (BookService) ctx.getBean("bookService");
     }
 }

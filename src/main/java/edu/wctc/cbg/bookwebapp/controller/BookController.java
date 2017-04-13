@@ -1,8 +1,8 @@
 package edu.wctc.cbg.bookwebapp.controller;
 
-import edu.wctc.cbg.bookwebapp.model.Author;
+import edu.wctc.cbg.bookwebapp.entity.Author;
 import edu.wctc.cbg.bookwebapp.model.AuthorFacade;
-import edu.wctc.cbg.bookwebapp.model.Book;
+import edu.wctc.cbg.bookwebapp.entity.Book;
 import edu.wctc.cbg.bookwebapp.model.BookFacade;
 import java.io.IOException;
 import java.util.List;
