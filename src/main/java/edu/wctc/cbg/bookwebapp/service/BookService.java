@@ -1,5 +1,6 @@
 package edu.wctc.cbg.bookwebapp.service;
 
+import edu.wctc.cbg.bookwebapp.entity.Author;
 import edu.wctc.cbg.bookwebapp.entity.Book;
 import edu.wctc.cbg.bookwebapp.repository.AuthorRepository;
 import edu.wctc.cbg.bookwebapp.repository.BookRepository;
@@ -66,5 +67,77 @@ public class BookService {
     public Book edit(Book book) {
         return bookRepo.saveAndFlush(book);
     }
-    
+    /**
+     * Custom method created for removing by id - Chris G
+     * @param bookId
+     */
+    @Transactional
+    public void removeById(String bookId){
+        LOG.debug("Deleting author with ID: " + bookId);
+        bookRepo.delete(new Integer(bookId));
+    }
+    /**
+     * Custom method created for adding an author entity - Chris G
+     * @param title
+     * @param isbn
+     * @param authorId
+     * @return 
+     */
+    @Transactional
+    public Book addBook(String title, String isbn, String authorId){
+        Author author = authorRepo.findOne(new Integer(authorId));
+        
+        Book book = new Book();
+        book.setTitle(title);
+        book.setIsbn(isbn);
+        book.setAuthor(author);
+   
+        return bookRepo.saveAndFlush(book);
+    }
+    /**
+     * Custom method created for editing an author entity - Chris G
+     * @param bookId
+     * @param title
+     * @param isbn
+     * @param authorId
+     * @return 
+     */
+    @Transactional
+    public Book editBook(String bookId, String title, String isbn, String authorId){
+        Author author = authorRepo.findOne(new Integer(authorId));
+        
+        Book book = bookRepo.findOne(new Integer(bookId));
+        book.setTitle(title);
+        book.setIsbn(isbn);
+        book.setAuthor(author);
+        
+        return bookRepo.saveAndFlush(book);
+    }
+    /**
+     * Custom method created for adding or editing an author entity 
+     * (Checks bookId if is null or empty) - Chris G
+     * @param bookId
+     * @param title
+     * @param isbn
+     * @param authorId
+     * @return 
+     */
+    @Transactional
+    public Book saveOrEdit(String bookId, String title, String isbn, String authorId){     
+        if(authorId == null || authorId.isEmpty() || authorId.equals("0")){
+            return this.addBook(title, isbn, authorId);
+        }else{
+            return this.editBook(bookId, title, isbn, authorId);
+        }
+    }
+    /**
+     * Custom method for finding books by a specific author - Chris G
+     * ***Not functional yet***
+     * @param authorId
+     * @return 
+     */
+    @Transactional
+    public List<Book> findBooksByAuthorId(String authorId){
+         return null;
+    }
 }

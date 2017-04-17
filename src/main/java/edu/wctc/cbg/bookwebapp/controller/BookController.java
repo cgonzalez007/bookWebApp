@@ -1,9 +1,9 @@
 package edu.wctc.cbg.bookwebapp.controller;
 
 import edu.wctc.cbg.bookwebapp.entity.Author;
-import edu.wctc.cbg.bookwebapp.model.AuthorFacade;
 import edu.wctc.cbg.bookwebapp.entity.Book;
-import edu.wctc.cbg.bookwebapp.model.BookFacade;
+import edu.wctc.cbg.bookwebapp.service.AuthorService;
+import edu.wctc.cbg.bookwebapp.service.BookService;
 import java.io.IOException;
 import java.util.List;
 import javax.ejb.EJB;
@@ -23,9 +23,9 @@ import javax.servlet.http.HttpSession;
 public class BookController extends HttpServlet {
     
     @EJB
-    private AuthorFacade authorService;
+    private AuthorService authorService;
     @EJB
-    private BookFacade bookService;
+    private BookService bookService;
     
     private static final String ATTR_SESSION_NUMBER_CHANGES = "sessionChanges";
     
@@ -109,7 +109,7 @@ public class BookController extends HttpServlet {
                 String[] booksToDelete = request.getParameterValues(CHECKBOX_NAME_BOOK_ID);
                 if(booksToDelete != null){
                     for(String id : booksToDelete){
-                        bookService.deleteBook(id);
+                        bookService.removeById(id);
                     }
                     this.addToChangesMade(session);
                 }
@@ -125,7 +125,7 @@ public class BookController extends HttpServlet {
                 destination = ADD_EDIT_BOOK_PAGE;
                 
                 String id = request.getParameter(BOOK_ID_TO_EDIT);
-                Book book = bookService.find(id);
+                Book book = bookService.findById(id);
                 request.setAttribute(INPUT_BOOK_ID, book.getBookId());
                 request.setAttribute(INPUT_TITLE, book.getTitle());
                 request.setAttribute(INPUT_ISBN, book.getIsbn());
@@ -142,13 +142,13 @@ public class BookController extends HttpServlet {
                
                 if(title != null && !title.isEmpty() && isbn != null && !isbn.isEmpty() 
                         && authorId != null && !authorId.isEmpty()){
-                    bookService.addOrUpdate(id, title, isbn, authorId);
+                    bookService.saveOrEdit(id, title, isbn, authorId);
                     this.addToChangesMade(session);
                     response.sendRedirect(response.encodeURL(BOOK_LIST_REQUEST));
                     return;
                 }else{
                     if(id != null && !id.isEmpty()){
-                        Book book = bookService.find(id);
+                        Book book = bookService.findById(id);
                         request.setAttribute(INPUT_BOOK_ID, book.getBookId());
                         request.setAttribute(INPUT_TITLE, book.getTitle());
                         request.setAttribute(INPUT_ISBN, book.getIsbn());

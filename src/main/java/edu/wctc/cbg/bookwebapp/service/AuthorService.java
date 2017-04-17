@@ -3,6 +3,7 @@ package edu.wctc.cbg.bookwebapp.service;
 import edu.wctc.cbg.bookwebapp.entity.Author;
 import edu.wctc.cbg.bookwebapp.repository.AuthorRepository;
 import edu.wctc.cbg.bookwebapp.repository.BookRepository;
+import java.util.Date;
 import java.util.List;
 import javax.inject.Inject;
 import org.slf4j.Logger;
@@ -81,14 +82,67 @@ public class AuthorService {
         LOG.debug("Deleting author: " + author.getAuthorName());
         authorRepo.delete(author);
     }
-
+    
     /**
      * Spring performs a transaction with readonly=false. This
      * guarantees a rollback if something goes wrong.
      * @param author 
+     * @return  
      */
     @Transactional
     public Author edit(Author author) {
         return authorRepo.saveAndFlush(author);
+    }
+    /**
+     * Custom method created for removing by id - Chris G
+     * @param authorId
+     */
+    @Transactional
+    public void removeById(String authorId){
+        LOG.debug("Deleting author with ID: " + authorId);
+        authorRepo.delete(new Integer(authorId));
+    }
+    /**
+     * Custom method created for adding an author entity - Chris G
+     * @param authorName
+     * @return 
+     */
+    @Transactional
+    public Author addAuthor(String authorName){
+        Date dateAdded = new Date();
+        
+        Author author = new Author();
+        author.setAuthorName(authorName);
+        author.setDateAdded(dateAdded);
+   
+        return authorRepo.saveAndFlush(author);
+    }
+    /**
+     * Custom method created for editing an author entity - Chris G
+     * @param authorId
+     * @param authorName
+     * @return 
+     */
+    @Transactional
+    public Author editAuthor(String authorId, String authorName){
+        Author author = authorRepo.findOne(new Integer(authorId));
+        author.setAuthorName(authorName);
+        
+        return authorRepo.saveAndFlush(author);
+    }
+    /**
+     * Custom method created for adding or editing an author entity
+     * (checks if authorId is null or empty)- Chris G
+     * @param authorId
+     * @param authorName
+     * @return 
+     */
+    @Transactional
+    public Author saveOrEdit(String authorId, String authorName){     
+        if(authorId == null || authorId.isEmpty() || authorId.equals("0")){
+            return this.addAuthor(authorName);
+        }else{
+            return this.editAuthor(authorId, authorName);
+        }
     }
 }

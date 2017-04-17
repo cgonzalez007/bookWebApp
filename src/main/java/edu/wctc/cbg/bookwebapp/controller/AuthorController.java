@@ -103,7 +103,7 @@ public class AuthorController extends HttpServlet {
                 String[] authorsToDelete = request.getParameterValues(CHECKBOX_NAME_AUTHOR_ID);
                 if(authorsToDelete != null){
                     for(String id : authorsToDelete){
-                        authorService.deleteAuthorById(id);
+                        authorService.removeById(id);
                     }
                     this.addToChangesMade(session);
                 }
@@ -117,7 +117,7 @@ public class AuthorController extends HttpServlet {
                 /*If we are editing customer information, we must retrieve the id of the 
                 author selected, based on an attribute created by a query string*/
                 String id  = request.getParameter(AUTHOR_ID_TO_EDIT);
-                Author author = authorService.find(id);
+                Author author = authorService.findById(id);
                 request.setAttribute(INPUT_AUTHOR_ID, author.getAuthorId());
                 request.setAttribute(INPUT_AUTHOR_NAME, author.getAuthorName());
                 request.setAttribute(INPUT_DATE_ADDED, author.getDateAdded());
@@ -131,13 +131,13 @@ public class AuthorController extends HttpServlet {
                 /*Test to check to see if authorName is null or empty. If it is, then the controller
                 will simply redirect the user to the same page (addEditAuthor)*/
                 if(authorName != null && !authorName.isEmpty()){
-                    authorService.addOrUpdate(id, authorName);
+                    authorService.saveOrEdit(id, authorName);
                     this.addToChangesMade(session);
                     response.sendRedirect(response.encodeURL(AUTHOR_LIST_REQUEST));
                     return;
                 }else{
                     if(id != null && !id.isEmpty()){
-                        Author author = authorService.find(id);
+                        Author author = authorService.findById(id);
                         request.setAttribute(INPUT_AUTHOR_ID, author.getAuthorId());
                         request.setAttribute(INPUT_AUTHOR_NAME, author.getAuthorName());
                         request.setAttribute(INPUT_DATE_ADDED, author.getDateAdded());
