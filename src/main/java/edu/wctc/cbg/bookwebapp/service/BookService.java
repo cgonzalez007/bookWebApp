@@ -131,4 +131,8 @@ public class BookService {
             return this.editBook(bookId, title, isbn, authorId);
         }
     }
+    @Transactional
+    public List<Book> getBooksByAuthorIdAlphabetically(String authorId){
+        return bookRepo.findAllByAuthorIdAlphabetically(new Integer(authorId));
+    }
 }

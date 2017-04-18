@@ -18,6 +18,8 @@ public interface BookRepository extends JpaRepository<Book, Integer>, Serializab
     @Query("SELECT b.title FROM Book b")
     public Object[] findAllWithNameOnly();
     
-//    @Query("SELECT b FROM Book b WHERE b.author.authorId = :authorId")
-//    public List<Book> findAllByAuthorId(@Param("authorId") String authorId);
+    @Query("SELECT b FROM Book b WHERE b.author.authorId = :authorId ORDER BY b.title ASC")
+    public List<Book> findAllByAuthorIdAlphabetically(@Param("authorId") Integer authorId);
+    
+    
 }

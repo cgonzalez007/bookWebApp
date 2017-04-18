@@ -124,8 +124,7 @@ public class AuthorController extends HttpServlet {
                 request.setAttribute(INPUT_AUTHOR_NAME, author.getAuthorName());
                 request.setAttribute(INPUT_DATE_ADDED, author.getDateAdded());
                 
-                Set<Book> bookSet = authorService.findByIdAndFetchBooksEagerly(id).getBookSet();
-                List<Book> books = new ArrayList<>(bookSet);
+                List<Book> books = bookService.getBooksByAuthorIdAlphabetically(id);
                 request.setAttribute(BOOKS_LIST_ATTRIBUTE, books);
             }else if(requestType.equalsIgnoreCase(RTYPE_SAVE_AUTHOR)){
                 String authorName = request.getParameter(INPUT_AUTHOR_NAME);
@@ -145,8 +144,7 @@ public class AuthorController extends HttpServlet {
                         request.setAttribute(INPUT_AUTHOR_NAME, author.getAuthorName());
                         request.setAttribute(INPUT_DATE_ADDED, author.getDateAdded());
                         
-                        Set<Book> bookSet = authorService.findByIdAndFetchBooksEagerly(id).getBookSet();
-                        List<Book> books = new ArrayList<>(bookSet);
+                        List<Book> books = bookService.getBooksByAuthorIdAlphabetically(id);
                         request.setAttribute(BOOKS_LIST_ATTRIBUTE, books);
                     }
                     destination = ADD_EDIT_AUTHOR_PAGE;

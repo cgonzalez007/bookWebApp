@@ -43,6 +43,10 @@ public class AuthorService {
         return authorRepo.findAll();
     }
     
+    public List<Author> findAllAlphabetically() {
+        return authorRepo.findAllAlphabetically();
+    }
+    
     public List<Author> findAllEagerly() {
         List<Author> authors = authorRepo.findAll();
         for(Author a : authors) {
