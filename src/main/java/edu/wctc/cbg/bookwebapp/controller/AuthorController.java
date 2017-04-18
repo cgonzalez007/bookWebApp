@@ -6,7 +6,9 @@ import edu.wctc.cbg.bookwebapp.entity.Book;
 import edu.wctc.cbg.bookwebapp.service.AuthorService;
 import edu.wctc.cbg.bookwebapp.service.BookService;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
@@ -122,7 +124,8 @@ public class AuthorController extends HttpServlet {
                 request.setAttribute(INPUT_AUTHOR_NAME, author.getAuthorName());
                 request.setAttribute(INPUT_DATE_ADDED, author.getDateAdded());
                 
-                List<Book> books = bookService.findBooksByAuthorId(id);
+                Set<Book> bookSet = authorService.findByIdAndFetchBooksEagerly(id).getBookSet();
+                List<Book> books = new ArrayList<>(bookSet);
                 request.setAttribute(BOOKS_LIST_ATTRIBUTE, books);
             }else if(requestType.equalsIgnoreCase(RTYPE_SAVE_AUTHOR)){
                 String authorName = request.getParameter(INPUT_AUTHOR_NAME);
@@ -142,7 +145,8 @@ public class AuthorController extends HttpServlet {
                         request.setAttribute(INPUT_AUTHOR_NAME, author.getAuthorName());
                         request.setAttribute(INPUT_DATE_ADDED, author.getDateAdded());
                         
-                        List<Book> books = bookService.findBooksByAuthorId(id);
+                        Set<Book> bookSet = authorService.findByIdAndFetchBooksEagerly(id).getBookSet();
+                        List<Book> books = new ArrayList<>(bookSet);
                         request.setAttribute(BOOKS_LIST_ATTRIBUTE, books);
                     }
                     destination = ADD_EDIT_AUTHOR_PAGE;
@@ -152,6 +156,7 @@ public class AuthorController extends HttpServlet {
             }
         } catch (Exception e) {
             destination = ERROR_PAGE;
+            e.printStackTrace();
             request.setAttribute("errorMsg", e.getCause().getMessage());
         }
 

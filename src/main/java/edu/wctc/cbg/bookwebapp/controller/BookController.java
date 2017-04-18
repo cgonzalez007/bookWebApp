@@ -6,14 +6,16 @@ import edu.wctc.cbg.bookwebapp.service.AuthorService;
 import edu.wctc.cbg.bookwebapp.service.BookService;
 import java.io.IOException;
 import java.util.List;
-import javax.ejb.EJB;
 import javax.servlet.RequestDispatcher;
+import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import org.springframework.web.context.WebApplicationContext;
+import org.springframework.web.context.support.WebApplicationContextUtils;
 
 /**
  *
@@ -22,9 +24,7 @@ import javax.servlet.http.HttpSession;
 @WebServlet(name = "BookController", urlPatterns = {"/bc"})
 public class BookController extends HttpServlet {
     
-    @EJB
     private AuthorService authorService;
-    @EJB
     private BookService bookService;
     
     private static final String ATTR_SESSION_NUMBER_CHANGES = "sessionChanges";
@@ -220,5 +220,13 @@ public class BookController extends HttpServlet {
         } else {
             session.setAttribute(ATTR_SESSION_NUMBER_CHANGES, 1);
         }
+    }
+    @Override
+    public final void init() throws ServletException {
+        // Ask Spring for object to inject
+        ServletContext sctx = getServletContext();
+        WebApplicationContext ctx = WebApplicationContextUtils.getWebApplicationContext(sctx);
+        authorService = (AuthorService) ctx.getBean("authorService");
+        bookService = (BookService) ctx.getBean("bookService");
     }
 }

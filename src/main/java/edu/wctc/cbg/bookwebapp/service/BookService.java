@@ -4,11 +4,11 @@ import edu.wctc.cbg.bookwebapp.entity.Author;
 import edu.wctc.cbg.bookwebapp.entity.Book;
 import edu.wctc.cbg.bookwebapp.repository.AuthorRepository;
 import edu.wctc.cbg.bookwebapp.repository.BookRepository;
+import java.util.ArrayList;
 import java.util.List;
 import javax.inject.Inject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -28,6 +28,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @Transactional(readOnly = true)
 public class BookService {
+    
     private transient final Logger LOG = LoggerFactory.getLogger(BookService.class);
     
     @Inject
@@ -124,20 +125,10 @@ public class BookService {
      */
     @Transactional
     public Book saveOrEdit(String bookId, String title, String isbn, String authorId){     
-        if(authorId == null || authorId.isEmpty() || authorId.equals("0")){
+        if(bookId == null || bookId.isEmpty() || bookId.equals("0")){
             return this.addBook(title, isbn, authorId);
         }else{
             return this.editBook(bookId, title, isbn, authorId);
         }
-    }
-    /**
-     * Custom method for finding books by a specific author - Chris G
-     * ***Not functional yet***
-     * @param authorId
-     * @return 
-     */
-    @Transactional
-    public List<Book> findBooksByAuthorId(String authorId){
-         return null;
     }
 }
