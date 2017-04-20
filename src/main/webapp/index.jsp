@@ -4,6 +4,7 @@
 <%@taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
  <c:set var="language" value="${pageContext.request.locale}"
     scope="session" />
+ <%@taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
 <fmt:setBundle basename="edu.wctc.cbg.bookwebapp.i18n.messages" />
 <!DOCTYPE html>
 <html lang="${language}">
@@ -30,9 +31,10 @@
         </body>
         <br>
         <br>
-        <footer>
-                Chris Gonzalez 2017
-        </footer>
+        <jsp:include page="loginFragment.jsp"/>
+        <br>
+        <br>
+        <jsp:include page="footer.jsp"/>
         <b
     </div>
     <!-- Bootstrap: Latest compiled and minified CSS -->

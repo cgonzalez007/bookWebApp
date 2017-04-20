@@ -5,9 +5,8 @@
  <c:set var="language" value="${pageContext.request.locale}"
     scope="session" />
  <%@taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
-<fmt:setBundle basename="edu.wctc.cbg.bookwebapp.i18n.messages" />
-<h1>
-    <fmt:message key="page.main.header"/>
-</h1>
-
-
+ 
+ <sec:authorize access="hasAnyRole('ROLE_MGR','ROLE_USER')">
+            Logged in as: <sec:authentication property="principal.username"></sec:authentication> ::
+            <a href='<%= this.getServletContext().getContextPath() + "/j_spring_security_logout"%>'>Log Me Out</a>
+        </sec:authorize>     

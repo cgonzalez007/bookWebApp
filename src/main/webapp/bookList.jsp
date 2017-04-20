@@ -4,6 +4,7 @@
 <%@taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
  <c:set var="language" value="${pageContext.request.locale}"
     scope="session" />
+ <%@taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
  <fmt:setBundle basename="edu.wctc.cbg.bookwebapp.i18n.messages" />
 <!DOCTYPE html>
 <!--Currently not Internationalized-->
@@ -22,8 +23,14 @@
             </h2>
             <br>
             <form id="bookFormDelete" name="bookFormDelete" method="POST" action="<%= response.encodeURL("bc?rType=deleteBook")%>">
-                <button type="submit" id="addBook" name="addBook" formaction="<%= response.encodeURL("bc?rType=addBook")%>">Add</button>
-                <input type="submit" id="deleteBook" name="delete" value="Delete">
+                <sec:csrfInput />
+                 
+                <sec:authorize access="hasAnyRole('ROLE_MGR')">
+                    <button type="submit" id="addBook" name="addBook" formaction="<%= response.encodeURL("bc?rType=addBook")%>">Add</button>
+                    <input type="submit" id="deleteBook" name="delete" value="Delete">
+                    <br>            
+                    <br>
+                </sec:authorize>
                 <br>
                 <br>
                 <table class="table">
@@ -60,7 +67,9 @@
                             </c:otherwise>     
                         </c:choose>
                                     <td>
-                                        <input type="checkbox" id="bookId" name="bookId" class="checkedBooks" value="${b.bookId}">
+                                        <sec:authorize access="hasAnyRole('ROLE_MGR')">
+                                            <input type="checkbox" id="bookId" name="bookId" class="checkedBooks" value="${b.bookId}">
+                                        </sec:authorize>
                                     </td>
                                     <td>
                                         ${b.bookId}
@@ -78,8 +87,10 @@
                                         ${b.author.authorName}                               
                                     </td>
                                     <td>
-                                        <button type="submit" formaction="<c:url value="bc?rType=editBook&id=${b.bookId}"/>" value="${b.bookId}" name="edit">
+                                        <sec:authorize access="hasAnyRole('ROLE_MGR')">
+                                            <button type="submit" formaction="<c:url value="bc?rType=editBook&id=${b.bookId}"/>" value="${b.bookId}" name="edit">
                                             Edit</button>
+                                        </sec:authorize>    
                                     </td>
                                 </tr>      
                     </c:forEach>
@@ -88,6 +99,9 @@
                 <br>
                 <a href="<%= response.encodeURL("bc?rType=home")%>">Go to Home Page</a>
         </body>
+        <br>
+        <br>
+        <jsp:include page="loginFragment.jsp"/>
         <br>
         <br>
         <jsp:include page="footer.jsp"/>

@@ -4,6 +4,7 @@
 <%@taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
  <c:set var="language" value="${pageContext.request.locale}"
     scope="session" />
+ <%@taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
 <fmt:setBundle basename="edu.wctc.cbg.bookwebapp.i18n.messages" />
 <!DOCTYPE html>
 <html lang="${language}">
@@ -72,6 +73,9 @@
                     <fmt:message key="page.addeditauthor.button.cancel"/>  </button>
             </form>
         </body>
+        <br>
+        <br>
+        <jsp:include page="loginFragment.jsp"/>
         <br>
         <br>
         <jsp:include page="footer.jsp"/>

@@ -4,6 +4,7 @@
 <%@taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
  <c:set var="language" value="${pageContext.request.locale}"
     scope="session" />
+ <%@taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
 <fmt:setBundle basename="edu.wctc.cbg.bookwebapp.i18n.messages" />
 <!DOCTYPE html>
 <html lang="${language}">
@@ -21,11 +22,16 @@
             </h2>
             <br>
             <form id="authorFormDelete" name="authorFormDelete" method="POST" action="<%= response.encodeURL("ac?rType=deleteAuthor")%>">  
-                <button type="submit" formaction="<%= response.encodeURL("ac?rType=addAuthor")%>" name="addAuthor" id="addAuthor">
-                    <fmt:message key="page.authorlist.button.add"/></button>
-                <input type="submit" id="deleteAuthor" name="delete" value="<fmt:message key="page.authorlist.button.delete"/>">
-            <br>            
-            <br>
+                <sec:csrfInput />
+                
+                <sec:authorize access="hasAnyRole('ROLE_MGR')">
+                    <button type="submit" formaction="<%= response.encodeURL("ac?rType=addAuthor")%>" name="addAuthor" id="addAuthor">
+                        <fmt:message key="page.authorlist.button.add"/></button>
+                    <input type="submit" id="deleteAuthor" name="delete" value="<fmt:message key="page.authorlist.button.delete"/>">
+                    <br>            
+                    <br>
+                </sec:authorize>
+            
             <table class="table">
                 <tr>
                     <th>
@@ -54,7 +60,9 @@
                         </c:otherwise>     
                     </c:choose>
                                 <td>
-                                    <input type="checkbox" id="authorId" name="authorId" class="checkedAuthors" value="${a.authorId}">
+                                    <sec:authorize access="hasAnyRole('ROLE_MGR')">
+                                        <input type="checkbox" id="authorId" name="authorId" class="checkedAuthors" value="${a.authorId}">
+                                    </sec:authorize>    
                                 </td>
                                 <td>
                                     ${a.authorId}
@@ -66,8 +74,10 @@
                                     <fmt:formatDate pattern="M/d/yyyy" value="${a.dateAdded}"/>                                 
                                 </td>
                                 <td>
-                                    <button type="submit" formaction="<c:url value="ac?rType=editAuthor&id=${a.authorId}"/>" value="${a.authorId}" name="edit">
+                                    <sec:authorize access="hasAnyRole('ROLE_MGR')">
+                                        <button type="submit" formaction="<c:url value="ac?rType=editAuthor&id=${a.authorId}"/>" value="${a.authorId}" name="edit">
                                         <fmt:message key="page.authorlist.button.edit"/></button>
+                                    </sec:authorize>    
                                 </td>
                             </tr>  
                 </c:forEach>             
@@ -76,6 +86,9 @@
             <br>
             <a href="<%= response.encodeURL("ac?rType=home")%>"><fmt:message key="page.authorlist.link.go.to.home.page"/></a>
         </body>
+        <br>
+        <br>
+        <jsp:include page="loginFragment.jsp"/>
         <br>
         <br>
         <jsp:include page="footer.jsp"/>
