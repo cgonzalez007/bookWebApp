@@ -36,8 +36,7 @@ public class AuthorService {
     @Inject
     private BookRepository bookRepo;
 
-    public AuthorService() {
-    }
+    public AuthorService() {}
 
     public List<Author> findAll() {
         return authorRepo.findAll();
