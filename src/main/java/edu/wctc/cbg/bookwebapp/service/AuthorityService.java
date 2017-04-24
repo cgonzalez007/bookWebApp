@@ -41,4 +41,48 @@ public class AuthorityService {
     public Authorities edit(Authorities authority) {
         return authorityRepo.saveAndFlush(authority);
     }
+    
+    @Transactional
+    public Authorities addAuthority(String username, String authorityName){
+        
+        Authorities authority = new Authorities();
+        authority.setUsername(username);
+        authority.setAuthority(authorityName);
+   
+        return authorityRepo.saveAndFlush(authority);
+    }
+    /**
+     * Custom method created for editing an Authorities entity - Chris G
+     * @param authorityId
+     * @param username
+     * @param authorityName
+     * @return 
+     */
+    @Transactional
+    public Authorities editAuthority(String authorityId, String username, 
+            String authorityName){
+        
+        Authorities authority = authorityRepo.findOne(new Integer(authorityId));
+        authority.setUsername(username);
+        authority.setAuthority(authorityName);
+        
+        return authorityRepo.saveAndFlush(authority);
+    }
+    /**
+     * Custom method created for adding or editing an Authorities entity
+     * (checks if authorId is null or empty)- Chris G
+     * @param authorityId
+     * @param username
+     * @param authorityName
+     * @return 
+     */
+    @Transactional
+    public Authorities saveOrEdit(String authorityId, String username, 
+            String authorityName){     
+        if(authorityId == null || authorityId.isEmpty() || authorityId.equals("0")){
+            return this.addAuthority(username, authorityName);
+        }else{
+            return this.editAuthority(authorityId, username, authorityName);
+        }
+    }
 }
