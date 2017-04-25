@@ -127,4 +127,29 @@
     </bean>
 
     <tx:annotation-driven />   
+    
+     <bean id="mailSender" class="org.springframework.mail.javamail.JavaMailSenderImpl">
+        <property name="host" value="smtp.sendgrid.net"/>
+        <property name="username" value="jlombardo"/>
+        <property name="password" value="??????????"/>
+        <property name="port" value="587"/>
+        <property name="javaMailProperties">
+            <props>
+                
+                <prop key="mail.transport.protocol">smtp</prop>
+              
+                <prop key="mail.smtp.auth">true</prop>
+                
+                <prop key="mail.smtp.starttls.enable">true</prop>
+                <prop key="mail.debug">true</prop>
+            </props>
+        </property>
+    </bean>
+
+    <!-- this is a template message that we can pre-load with default state -->
+    <bean id="templateMessage" class="org.springframework.mail.SimpleMailMessage">
+        <property name="from" value="webmaster@byteshop.net"/>
+        <property name="to" value="james.g.lombardo@gmail.com"/>
+    </bean>
+    
 </beans>
