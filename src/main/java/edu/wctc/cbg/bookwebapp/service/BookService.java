@@ -36,6 +36,9 @@ public class BookService {
     
     @Inject
     private AuthorRepository authorRepo;
+    
+    @Inject
+    private DeleteNotificationEmailSender deleteNotificationEmailSender;
 
     public BookService() {
     }
@@ -56,7 +59,10 @@ public class BookService {
     @Transactional
     public void remove(Book book) {
         LOG.debug("Deleting book: " + book.getTitle());
+        
         bookRepo.delete(book);
+        
+        deleteNotificationEmailSender.sendEmail("Book");
     }
 
     /**
@@ -75,7 +81,10 @@ public class BookService {
     @Transactional
     public void removeById(String bookId){
         LOG.debug("Deleting author with ID: " + bookId);
+        
         bookRepo.delete(new Integer(bookId));
+        
+        deleteNotificationEmailSender.sendEmail("Book");
     }
     /**
      * Custom method created for adding an author entity - Chris G

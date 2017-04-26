@@ -130,8 +130,8 @@
     
      <bean id="mailSender" class="org.springframework.mail.javamail.JavaMailSenderImpl">
         <property name="host" value="smtp.sendgrid.net"/>
-        <property name="username" value="jlombardo"/>
-        <property name="password" value="??????????"/>
+        <property name="username" value="cgonzalez007"/>
+        <property name="password" value="00781spittajetS"/>
         <property name="port" value="587"/>
         <property name="javaMailProperties">
             <props>
@@ -148,8 +148,8 @@
 
     <!-- this is a template message that we can pre-load with default state -->
     <bean id="templateMessage" class="org.springframework.mail.SimpleMailMessage">
-        <property name="from" value="webmaster@byteshop.net"/>
-        <property name="to" value="james.g.lombardo@gmail.com"/>
+        <property name="from" value="cgonzalez.hala.madrid@gmail.com"/>
+        <property name="to" value="cgonzalez15@my.wctc.edu"/>
     </bean>
     
 </beans>
