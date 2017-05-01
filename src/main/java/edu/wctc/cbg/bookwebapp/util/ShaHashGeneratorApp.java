@@ -1,4 +1,4 @@
-package edu.wctc.cbg.bookwebapp.service.util;
+package edu.wctc.cbg.bookwebapp.util;
 
 import org.springframework.security.authentication.encoding.ShaPasswordEncoder;
 

@@ -22,18 +22,20 @@
                 Book List
             </h2>
             <br>
-            <form id="bookFormDelete" name="bookFormDelete" method="POST" action="<%= response.encodeURL("bc?rType=deleteBook")%>">
+            <form id="bookFormAdd" name="bookFormAdd" method="POST" action="<%= response.encodeURL("bc?rType=addBook")%>">
                 <sec:csrfInput />
                  
                 <sec:authorize access="hasAnyRole('ROLE_MGR')">
-                    <button type="submit" id="addBook" name="addBook" formaction="<%= response.encodeURL("bc?rType=addBook")%>">Add</button>
-                    <input type="submit" id="deleteBook" name="delete" value="Delete">
+                    <input type="submit" id="addBook" name="addBook" value="Add">
+                    <button id="deleteBook" name="delete" value="Delete">
+                        Delete
+                    </button>    
                     <br>            
                     <br>
                 </sec:authorize>
                 <br>
                 <br>
-                <table class="table">
+                <table class="table" id="bookTable">
                     <tr>
                         <th>
                             
@@ -112,4 +114,5 @@
 <link href="stylesheet.css" rel="stylesheet" type="text/css"/>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
 <script src="<fmt:message key="page.js.prompts.filename"/>"></script>
+<script src="bookMgmt.js" type="text/javascript"></script>
 </html>

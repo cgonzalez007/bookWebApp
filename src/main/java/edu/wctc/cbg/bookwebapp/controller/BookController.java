@@ -5,7 +5,11 @@ import edu.wctc.cbg.bookwebapp.entity.Book;
 import edu.wctc.cbg.bookwebapp.service.AuthorService;
 import edu.wctc.cbg.bookwebapp.service.BookService;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.List;
+import javax.json.Json;
+import javax.json.JsonArray;
+import javax.json.JsonArrayBuilder;
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
@@ -57,6 +61,7 @@ public class BookController extends HttpServlet {
     private static final String RTYPE_ADD_BOOK = "addBook";
     private static final String RTYPE_EDIT_BOOK = "editBook";
     private static final String RTYPE_SAVE_BOOK = "saveBook";
+    private static final String RTYPE_REFRESH = "refresh";
     
     /*Html check box used to determine what author to delete*/
     private static final String CHECKBOX_NAME_BOOK_ID = "bookId";
@@ -106,6 +111,8 @@ public class BookController extends HttpServlet {
                  response.sendRedirect(response.encodeRedirectURL(HOME_PAGE));
                  return;
             }else if(requestType.equalsIgnoreCase(RTYPE_DELETE_BOOK)){
+                PrintWriter out = response.getWriter();                   
+                
                 String[] booksToDelete = request.getParameterValues(CHECKBOX_NAME_BOOK_ID);
                 if(booksToDelete != null){
                     for(String id : booksToDelete){
@@ -114,7 +121,11 @@ public class BookController extends HttpServlet {
                     this.addToChangesMade(session);
                 }
                 
-                response.sendRedirect(response.encodeURL(BOOK_LIST_REQUEST));
+                response.setContentType("application/json; charset=UTF-8");
+                response.setStatus(200);
+                out.write("{\"success\":\"true\"}");
+                out.flush();
+                    
                 return;
             }else if(requestType.equalsIgnoreCase(RTYPE_ADD_BOOK)){
                 destination = ADD_EDIT_BOOK_PAGE;
@@ -163,6 +174,9 @@ public class BookController extends HttpServlet {
                 destination = BOOK_LIST_PAGE;
                 List<Book> books = bookService.findAll();
                 request.setAttribute(BOOKS, books);
+            }else if(requestType.equalsIgnoreCase(RTYPE_REFRESH)){
+                this.refreshListJSON(request, response);
+                return;
             }else{
                 request.setAttribute("errorMsg", ERROR_INVALID_PARAM);
             }
@@ -228,5 +242,28 @@ public class BookController extends HttpServlet {
         WebApplicationContext ctx = WebApplicationContextUtils.getWebApplicationContext(sctx);
         authorService = (AuthorService) ctx.getBean("authorService");
         bookService = (BookService) ctx.getBean("bookService");
+    }
+    
+    private void refreshListJSON(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        List<Book> books = bookService.findAll();       
+        JsonArrayBuilder jsonArrayBuilder = Json.createArrayBuilder();
+        
+        for(Book book : books){
+            jsonArrayBuilder.add(
+                    Json.createObjectBuilder()
+                    .add("bookId", book.getBookId())
+                    .add("title", book.getTitle())
+                    .add("isbn", book.getIsbn())
+                    .add("authorId", book.getAuthor().getAuthorId())
+                    .add("authorName", book.getAuthor().getAuthorName())
+            );
+        }
+        
+        JsonArray booksJson = jsonArrayBuilder.build();
+        response.setContentType("application/json");
+        PrintWriter out = response.getWriter();
+        out.write(booksJson.toString());
+        out.flush();
     }
 }
