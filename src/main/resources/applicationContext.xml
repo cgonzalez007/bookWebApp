@@ -130,8 +130,8 @@
     
      <bean id="mailSender" class="org.springframework.mail.javamail.JavaMailSenderImpl">
         <property name="host" value="smtp.sendgrid.net"/>
-        <property name="username" value="?????"/>
-        <property name="password" value="?????"/>
+        <property name="username" value="cgonzalez007"/>
+        <property name="password" value="777Hm00781"/>
         <property name="port" value="587"/>
         <property name="javaMailProperties">
             <props>

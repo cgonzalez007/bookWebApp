@@ -114,5 +114,5 @@
 <link href="stylesheet.css" rel="stylesheet" type="text/css"/>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
 <script src="<fmt:message key="page.js.prompts.filename"/>"></script>
-<script src="bookMgmt.js" type="text/javascript"></script>
+<script src="bookAJAX.js" type="text/javascript"></script>
 </html>
