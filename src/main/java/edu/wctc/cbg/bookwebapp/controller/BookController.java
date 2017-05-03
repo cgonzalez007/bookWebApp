@@ -4,12 +4,17 @@ import edu.wctc.cbg.bookwebapp.entity.Author;
 import edu.wctc.cbg.bookwebapp.entity.Book;
 import edu.wctc.cbg.bookwebapp.service.AuthorService;
 import edu.wctc.cbg.bookwebapp.service.BookService;
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.io.StringReader;
+import java.util.ArrayList;
 import java.util.List;
 import javax.json.Json;
 import javax.json.JsonArray;
 import javax.json.JsonArrayBuilder;
+import javax.json.JsonObject;
+import javax.json.JsonReader;
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
@@ -111,10 +116,30 @@ public class BookController extends HttpServlet {
                  response.sendRedirect(response.encodeRedirectURL(HOME_PAGE));
                  return;
             }else if(requestType.equalsIgnoreCase(RTYPE_DELETE_BOOK)){
-                PrintWriter out = response.getWriter();                   
+                PrintWriter out = response.getWriter();
+                    StringBuilder sb = new StringBuilder();
+                    BufferedReader br = request.getReader();
+                    try {
+                        String line;
+                        while ((line = br.readLine()) != null) {
+                            sb.append(line).append('\n');
+                        }
+                    } finally {
+                        br.close();
+                    }                 
+                String payload = sb.toString();
+                JsonReader reader = Json.createReader(new StringReader(payload));
+                JsonObject jsonObj = reader.readObject();
+                JsonArray jsonArray = jsonObj.getJsonArray("bookIds");
+                List<String> booksToDelete = new ArrayList<>();
                 
-                String[] booksToDelete = request.getParameterValues(CHECKBOX_NAME_BOOK_ID);
-                if(booksToDelete != null){
+                if(jsonArray != null && !jsonArray.isEmpty()){
+                    for(int i = 0 ; i < jsonArray.size() ; i++){
+                        booksToDelete.add(jsonArray.getString(i));
+                    }
+                }
+                
+                if(!booksToDelete.isEmpty()){
                     for(String id : booksToDelete){
                         bookService.removeById(id);
                     }
