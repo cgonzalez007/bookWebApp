@@ -66,7 +66,7 @@ public class BookController extends HttpServlet {
     private static final String RTYPE_ADD_BOOK = "addBook";
     private static final String RTYPE_EDIT_BOOK = "editBook";
     private static final String RTYPE_SAVE_BOOK = "saveBook";
-    private static final String RTYPE_REFRESH = "refresh";
+    private static final String RTYPE_REFRESH_AJAX = "refreshAjax";
     
     /*Html check box used to determine what author to delete*/
     private static final String CHECKBOX_NAME_BOOK_ID = "bookId";
@@ -199,8 +199,8 @@ public class BookController extends HttpServlet {
                 destination = BOOK_LIST_PAGE;
                 List<Book> books = bookService.findAll();
                 request.setAttribute(BOOKS, books);
-            }else if(requestType.equalsIgnoreCase(RTYPE_REFRESH)){
-                this.refreshListJSON(request, response);
+            }else if(requestType.equalsIgnoreCase(RTYPE_REFRESH_AJAX)){
+                this.refreshListAJAX(request, response);
                 return;
             }else{
                 request.setAttribute("errorMsg", ERROR_INVALID_PARAM);
@@ -269,7 +269,7 @@ public class BookController extends HttpServlet {
         bookService = (BookService) ctx.getBean("bookService");
     }
     
-    private void refreshListJSON(HttpServletRequest request, HttpServletResponse response)
+    private void refreshListAJAX(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         List<Book> books = bookService.findAll();       
         JsonArrayBuilder jsonArrayBuilder = Json.createArrayBuilder();

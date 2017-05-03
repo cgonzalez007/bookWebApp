@@ -5,8 +5,17 @@ import edu.wctc.cbg.bookwebapp.entity.Author;
 import edu.wctc.cbg.bookwebapp.entity.Book;
 import edu.wctc.cbg.bookwebapp.service.AuthorService;
 import edu.wctc.cbg.bookwebapp.service.BookService;
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.StringReader;
+import java.util.ArrayList;
 import java.util.List;
+import javax.json.Json;
+import javax.json.JsonArray;
+import javax.json.JsonArrayBuilder;
+import javax.json.JsonObject;
+import javax.json.JsonReader;
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
@@ -52,6 +61,7 @@ public class AuthorController extends HttpServlet {
     private static final String RTYPE_ADD_AUTHOR = "addAuthor";
     private static final String RTYPE_EDIT_AUTHOR = "editAuthor";
     private static final String RTYPE_SAVE_AUTHOR = "saveAuthor";
+    private static final String RTYPE_REFRESH_AJAX = "refreshAjax";
     
     /*Html check box used to determine what author to delete*/
     private static final String CHECKBOX_NAME_AUTHOR_ID = "authorId";
@@ -100,15 +110,40 @@ public class AuthorController extends HttpServlet {
                  response.sendRedirect(response.encodeRedirectURL(HOME_PAGE));
                  return;
             }else if(requestType.equalsIgnoreCase(RTYPE_DELETE_AUTHOR)){
-                String[] authorsToDelete = request.getParameterValues(CHECKBOX_NAME_AUTHOR_ID);
-                if(authorsToDelete != null){
+                PrintWriter out = response.getWriter();
+                    StringBuilder sb = new StringBuilder();
+                    BufferedReader br = request.getReader();
+                    try {
+                        String line;
+                        while ((line = br.readLine()) != null) {
+                            sb.append(line).append('\n');
+                        }
+                    } finally {
+                        br.close();
+                    }                 
+                String payload = sb.toString();
+                JsonReader reader = Json.createReader(new StringReader(payload));
+                JsonObject jsonObj = reader.readObject();
+                JsonArray jsonArray = jsonObj.getJsonArray("authorIds");
+                List<String> authorsToDelete = new ArrayList<>();
+                
+                if(jsonArray != null && !jsonArray.isEmpty()){
+                    for(int i = 0 ; i < jsonArray.size() ; i++){
+                        authorsToDelete.add(jsonArray.getString(i));
+                    }
+                }
+                
+                if(!authorsToDelete.isEmpty()){
                     for(String id : authorsToDelete){
                         authorService.removeById(id);
                     }
                     this.addToChangesMade(session);
                 }
                 
-                response.sendRedirect(response.encodeURL(AUTHOR_LIST_REQUEST));
+                response.setContentType("application/json; charset=UTF-8");
+                response.setStatus(200);
+                out.write("{\"success\":\"true\"}");
+                out.flush();
                 return;
             }else if(requestType.equalsIgnoreCase(RTYPE_ADD_AUTHOR)){
                 destination = ADD_EDIT_AUTHOR_PAGE;
@@ -147,6 +182,9 @@ public class AuthorController extends HttpServlet {
                     }
                     destination = ADD_EDIT_AUTHOR_PAGE;
                 }
+            }else if(requestType.equalsIgnoreCase(RTYPE_REFRESH_AJAX)){
+                this.refreshListAJAX(request, response);
+                return;
             }else{
                 request.setAttribute("errorMsg", ERROR_INVALID_PARAM);
             }
@@ -214,5 +252,25 @@ public class AuthorController extends HttpServlet {
         WebApplicationContext ctx = WebApplicationContextUtils.getWebApplicationContext(sctx);
         authorService = (AuthorService) ctx.getBean("authorService");
         bookService = (BookService) ctx.getBean("bookService");
+    }
+    
+    private void refreshListAJAX(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        List<Author> authors = authorService.findAll();       
+        JsonArrayBuilder jsonArrayBuilder = Json.createArrayBuilder();
+        
+        for(Author author : authors){
+            jsonArrayBuilder.add(Json.createObjectBuilder()
+                    .add("authorId", author.getAuthorId())
+                    .add("authorName", author.getAuthorName())
+                    .add("dateAdded", author.getDateAdded().toString())                    
+            );
+        }
+        
+        JsonArray authorsJson = jsonArrayBuilder.build();
+        response.setContentType("application/json");
+        PrintWriter out = response.getWriter();
+        out.write(authorsJson.toString());
+        out.flush();
     }
 }

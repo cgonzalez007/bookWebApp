@@ -32,7 +32,7 @@
                     <br>
                 </sec:authorize>
             
-            <table class="table">
+            <table class="table" id="authorTable">
                 <tr>
                     <th>
                        
@@ -100,4 +100,5 @@
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
 <script src="jquery-ui.min.js" type="text/javascript"></script>
 <script src="<fmt:message key="page.js.prompts.filename"/>"></script>
+<a href="authorList.jsp"></a>
 </html>
