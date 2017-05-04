@@ -111,8 +111,8 @@ public class AuthorController extends HttpServlet {
                  return;
             }else if(requestType.equalsIgnoreCase(RTYPE_DELETE_AUTHOR)){
                 PrintWriter out = response.getWriter();
-                    StringBuilder sb = new StringBuilder();
-                    BufferedReader br = request.getReader();
+                StringBuilder sb = new StringBuilder();
+                BufferedReader br = request.getReader();
                     try {
                         String line;
                         while ((line = br.readLine()) != null) {

@@ -28,6 +28,8 @@
     <!-- Scans within the base package of the application for Spring annotations to configure as beans -->
     <context:component-scan base-package="edu.wctc.cbg.bookwebapp">
         <context:exclude-filter type="regex" expression="edu\.wctc\.cbg\.bookwebapp\.repository.*" />
+        <context:exclude-filter type="regex" expression="edu\.wctc\.cbg\.bookwebapp\.event.*" />
+        <context:exclude-filter type="regex" expression="edu\.wctc\.cbg\.bookwebapp\.controller.*" />
     </context:component-scan>
     <context:annotation-config/>
     

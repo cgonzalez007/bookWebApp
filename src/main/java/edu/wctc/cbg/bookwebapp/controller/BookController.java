@@ -117,8 +117,8 @@ public class BookController extends HttpServlet {
                  return;
             }else if(requestType.equalsIgnoreCase(RTYPE_DELETE_BOOK)){
                 PrintWriter out = response.getWriter();
-                    StringBuilder sb = new StringBuilder();
-                    BufferedReader br = request.getReader();
+                StringBuilder sb = new StringBuilder();
+                BufferedReader br = request.getReader();
                     try {
                         String line;
                         while ((line = br.readLine()) != null) {
@@ -126,7 +126,7 @@ public class BookController extends HttpServlet {
                         }
                     } finally {
                         br.close();
-                    }                 
+                    }                
                 String payload = sb.toString();
                 JsonReader reader = Json.createReader(new StringReader(payload));
                 JsonObject jsonObj = reader.readObject();
@@ -149,8 +149,7 @@ public class BookController extends HttpServlet {
                 response.setContentType("application/json; charset=UTF-8");
                 response.setStatus(200);
                 out.write("{\"success\":\"true\"}");
-                out.flush();
-                    
+                out.flush();             
                 return;
             }else if(requestType.equalsIgnoreCase(RTYPE_ADD_BOOK)){
                 destination = ADD_EDIT_BOOK_PAGE;

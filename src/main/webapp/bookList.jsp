@@ -27,7 +27,7 @@
                  
                 <sec:authorize access="hasAnyRole('ROLE_MGR')">
                     <input type="submit" id="addBook" name="addBook" value="Add">
-                    <button id="deleteBook" name="delete" value="Delete">
+                    <button id="deleteBook" name="deleteBook" value="Delete">
                         Delete
                     </button>    
                     <br>            
@@ -113,6 +113,5 @@
       integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
 <link href="stylesheet.css" rel="stylesheet" type="text/css"/>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
-<script src="<fmt:message key="page.js.prompts.filename"/>"></script>
 <script src="bookAJAX.js" type="text/javascript"></script>
 </html>

@@ -21,13 +21,14 @@
                 <fmt:message key="page.authorlist.subheader.author.list"/>
             </h2>
             <br>
-            <form id="authorFormDelete" name="authorFormDelete" method="POST" action="<%= response.encodeURL("ac?rType=deleteAuthor")%>">  
+            <form id="authorFormAdd" name="authorFormAdd" method="POST" action="<%= response.encodeURL("ac?rType=addAuthor")%>">  
                 <sec:csrfInput />
                 
                 <sec:authorize access="hasAnyRole('ROLE_MGR')">
-                    <button type="submit" formaction="<%= response.encodeURL("ac?rType=addAuthor")%>" name="addAuthor" id="addAuthor">
-                        <fmt:message key="page.authorlist.button.add"/></button>
-                    <input type="submit" id="deleteAuthor" name="delete" value="<fmt:message key="page.authorlist.button.delete"/>">
+                    <input type="submit" id="addAuthor" name="addAuthor" value="Add">
+                    <button id="deleteAuthor" name="deleteAuthor" value="Delete">
+                        Delete
+                    </button> 
                     <br>            
                     <br>
                 </sec:authorize>
@@ -98,7 +99,5 @@
       integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
 <link href="stylesheet.css" rel="stylesheet" type="text/css"/>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
-<script src="jquery-ui.min.js" type="text/javascript"></script>
-<script src="<fmt:message key="page.js.prompts.filename"/>"></script>
-<a href="authorList.jsp"></a>
+<script src="authorAJAX.js" type="text/javascript"></script>
 </html>
