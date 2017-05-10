@@ -1,5 +1,5 @@
 /**
- * Chris Gonzalez 2016
+ * Chris Gonzalez 2017
  */
 
 (function ($, window, document) {
